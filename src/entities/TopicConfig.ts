@@ -1,16 +1,15 @@
 import { Entity,PrimaryGeneratedColumn,Column,ManyToOne,JoinColumn, Relation } from "typeorm";
-import { Topic } from "@/entities/Topic";
-import { Field } from "@/entities/Field";
+import { Topic, Field } from "@/entities/index";
 
 @Entity()
 export class TopicConfig {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @Column({ nullable: true })
+  @Column({ nullable: true,type:"boolean" })
   required_override!: boolean;
 
-  @Column({ default: true })
+  @Column({ default: true,type:"boolean" })
   visible!: boolean;
 
   @ManyToOne(() => Topic, (topic) => topic.fieldConfigs, {

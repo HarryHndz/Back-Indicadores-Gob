@@ -1,24 +1,24 @@
-import { Entity,PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, Relation } from "typeorm";
-import { Form } from "@/entities/Form";
+import { Entity,PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, Relation, CreateDateColumn } from "typeorm";
+import { Form } from "@/entities/index";
 
 @Entity()
 export class Field{
   @PrimaryGeneratedColumn()
   id!: number
 
-  @Column({length:100})
+  @Column({length:100,type:"varchar"})
   key!:string
 
-  @Column({length:150})
+  @Column({length:150,type:"varchar"})
   label!: string
 
-  @Column({default: true})
+  @Column({default: true,type:"boolean"})
   active!: boolean
 
-  @Column({length:50})
+  @Column({length:50,type:"varchar"})
   type!:string
 
-  @Column({default: new Date()})
+  @CreateDateColumn({default: new Date()})
   createdAt!: Date
 
   @Column({type:'jsonb',nullable:true})

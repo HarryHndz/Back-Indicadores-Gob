@@ -1,7 +1,16 @@
 import 'reflect-metadata';
-import { DataSource } from "typeorm";
 import env from 'dotenv';
-import { User } from '@/entities/User';
+import { DataSource } from "typeorm";
+import { 
+  User, 
+  Rol, 
+  GuvernmentEntity, 
+  Field, 
+  Form, 
+  Topic, 
+  TopicConfig, 
+  FormData 
+} from '@/entities/index';
 env.config();
 
 export const AppDataSource = new DataSource({
@@ -11,9 +20,18 @@ export const AppDataSource = new DataSource({
   username: String(process.env.DB_USER || ''),
   password: String(process.env.DB_PASSWORD || ''),
   database: String(process.env.DB_NAME || ''),
-  synchronize:true,
-  logging:false,
-  entities:[User],
-  migrations:[],
+  synchronize:false,
+  logging:true,
+  entities:[
+    User, 
+    Rol, 
+    GuvernmentEntity, 
+    Field, 
+    Form, 
+    Topic, 
+    TopicConfig, 
+    FormData
+  ],
+  migrations:["src/migrations/*.ts"],
   subscribers:[],
 })

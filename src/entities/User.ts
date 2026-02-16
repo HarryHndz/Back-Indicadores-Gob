@@ -1,25 +1,24 @@
-import { Entity,PrimaryGeneratedColumn,Column,ManyToOne,JoinColumn, Relation } from "typeorm";
-import { Rol } from "@/entities/Rol";
-import { GuvernmentEntity } from "@/entities/GuvernmentEntity";
+import { Entity,PrimaryGeneratedColumn,Column,ManyToOne,JoinColumn, Relation, CreateDateColumn } from "typeorm";
+import { Rol, GuvernmentEntity } from "@/entities/index";
 
 @Entity()
 export class User{
   @PrimaryGeneratedColumn()
   id!: number
 
-  @Column({length:150})
+  @Column({length:150,type:"varchar"})
   name!: string
 
-  @Column({length:150,unique:true})
+  @Column({length:150,unique:true,type:"varchar"})
   email!: string
 
-  @Column({length:150})
+  @Column({length:150,type:"varchar"})
   password!: string
 
-  @Column({default: true})
+  @Column({default: true,type:"boolean"})
   active!: boolean
 
-  @Column({default: new Date()})
+  @CreateDateColumn()
   createdAt!: Date
 
   @ManyToOne(() => Rol)

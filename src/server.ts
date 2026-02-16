@@ -1,3 +1,4 @@
+import 'reflect-metadata';
 import { app } from "./index";
 import { AppDataSource } from "@/config/db";
 

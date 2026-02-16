@@ -1,23 +1,21 @@
 import { Entity,PrimaryGeneratedColumn,Column,OneToMany,Relation } from "typeorm";
-import {User} from "@/entities/User"
-import {Form} from "@/entities/Form"
-import {Topic} from "@/entities/Topic"
+import {User,Form,Topic} from "@/entities/index"
 
 @Entity()
 export class GuvernmentEntity {
   @PrimaryGeneratedColumn()
   id!: number
 
-  @Column({length:150})
+  @Column({length:150,type:"varchar"})
   name!: string
 
-  @Column({length:250})
+  @Column({length:250,type:"varchar"})
   description!: string
 
-  @Column({default: true})
+  @Column({default: true,type:"boolean"})
   active!: boolean
 
-  @Column({default: new Date()})
+  @Column({default: new Date(),type:"timestamp"})
   createdAt!: Date
 
   @OneToMany(() => User, (user) => user.guvernment)

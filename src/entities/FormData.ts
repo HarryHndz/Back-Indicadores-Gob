@@ -1,7 +1,5 @@
 import { Entity,PrimaryGeneratedColumn,Column,CreateDateColumn,UpdateDateColumn,ManyToOne,JoinColumn, Relation } from "typeorm";
-import { Form } from "@/entities/Form";
-import { Topic } from "@/entities/Topic";
-import { User } from "@/entities/User";
+import { Form, Topic, User } from "@/entities/index";
 
 @Entity()
 export class FormData {
@@ -11,13 +9,13 @@ export class FormData {
   @Column({ type: "jsonb" })
   data!: Record<string, any>;
 
-  @Column({ default: false })
+  @Column({ default: false,type:"boolean" })
   edit!: boolean;
 
-  @Column({ default: true })
+  @Column({ default: true,type:"boolean" })
   active!: boolean;
 
-  @CreateDateColumn()
+  @CreateDateColumn({default:new Date()})
   createdAt!: Date;
 
   @UpdateDateColumn()

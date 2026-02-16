@@ -1,19 +1,19 @@
-import { Entity,PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn,OneToMany, Relation } from "typeorm";
-import { GuvernmentEntity } from "@/entities/GuvernmentEntity";
-import { Field } from "@/entities/Field";
-import { FormData } from "@/entities/FormData";
+import { Entity,PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn,OneToMany, Relation, CreateDateColumn } from "typeorm";
+import { Field, FormData,GuvernmentEntity } from "@/entities/index"
+
+
 @Entity()
 export class Form{
   @PrimaryGeneratedColumn()
   id!: number
 
-  @Column({length:150})
+  @Column({length:150,type:"varchar"})
   name!: string
 
-  @Column({default: true})
+  @Column({default: true,type:"boolean"})
   active!: boolean
 
-  @Column({default: new Date()})
+  @CreateDateColumn({default: new Date()})
   createdAt!: Date
 
   @ManyToOne(() => GuvernmentEntity, (guvernment) => guvernment.forms)

@@ -1,14 +1,14 @@
-import { Entity,PrimaryGeneratedColumn,Column } from "typeorm";
+import { Entity,PrimaryGeneratedColumn,Column, CreateDateColumn } from "typeorm";
 
 @Entity()
 export class Rol {
   @PrimaryGeneratedColumn()
   id!: number
 
-  @Column()
+  @Column({type:"varchar",length:150})
   name!: string
 
-  @Column({default: new Date()})
+  @CreateDateColumn({default: new Date()})
   createdAt!: Date
 
 }

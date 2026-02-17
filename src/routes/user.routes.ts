@@ -1,13 +1,20 @@
 import { UserController } from "@/controllers/user.controller";
 import { Router } from "express";
+import {
+  validateUserData,
+} from "@/validations/user.validation";
 
-const router = Router()
-const userContoller = new UserController()
+const router = Router();
+const userContoller = new UserController();
 
-router.get('/',userContoller.findAll)
-router.get('/:id',userContoller.findById)
-router.post('/',userContoller.create)
-router.put('/:id',userContoller.update)
-router.delete('/:id',userContoller.delete)
+router.get("/", userContoller.findAll);
+router.get("/:id", userContoller.findById);
+router.post("/", validateUserData, userContoller.create);
+router.put(
+  "/:id",
+  validateUserData,
+  userContoller.update
+);
+router.delete("/:id", userContoller.delete);
 
-export default router
+export default router;

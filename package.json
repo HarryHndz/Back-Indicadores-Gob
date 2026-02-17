@@ -24,7 +24,8 @@
     "express-useragent": "^1.0.15",
     "jsonwebtoken": "^9.0.2",
     "pg": "^8.18.0",
-    "reflect-metadata": "^0.2.2"
+    "reflect-metadata": "^0.2.2",
+    "zod": "^4.3.6"
   },
   "devDependencies": {
     "@types/express": "4.17",

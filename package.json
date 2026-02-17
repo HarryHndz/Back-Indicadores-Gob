@@ -5,11 +5,11 @@
   "main": "index.js",
   "scripts": {
     "start": "node dist/index.js",
-    "typeorm":"tsx ./node_modules/typeorm/cli.js",
-    "migration:generate":"npm run typeorm -- migration:generate -d src/config/db.ts src/migrations/init-migration",
-    "migration:run":"npm run typeorm -- migration:run -d src/config/db.ts",
-    "migration:revert":"npm run typeorm migration:revert -d src/config/db.ts",
-    "dev": "tsx watch src/index.ts",
+    "typeorm": "tsx ./node_modules/typeorm/cli.js",
+    "migration:generate": "npm run typeorm -- migration:generate -d src/config/db.ts src/migrations/init-migration",
+    "migration:run": "npm run typeorm -- migration:run -d src/config/db.ts",
+    "migration:revert": "npm run typeorm migration:revert -d src/config/db.ts",
+    "dev": "tsx watch src/server.ts",
     "build": "tsc"
   },
   "keywords": [],
@@ -17,6 +17,7 @@
   "license": "ISC",
   "type": "module",
   "dependencies": {
+    "bcrypt": "^6.0.0",
     "dotenv": "^16.6.1",
     "express": "^4.17.3",
     "express-jwt": "^8.5.1",

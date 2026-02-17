@@ -23,4 +23,10 @@ export class UserService{
   async delete(id:number){
     return this.userRepository.delete(id)
   }
+  async findByEmail(email:string){
+    return this.userRepository.findOne({
+      where: { email },
+      relations: ['rol', 'guvernment'] 
+    });
+  }
 }

@@ -6,7 +6,8 @@ import {
   formRouter, 
   topicRouter, 
   fieldRouter,
-  rolRouter 
+  rolRouter,
+  formDataRouter 
 } from "@/routes";
 import { expressjwt } from 'express-jwt'
 import { SECRET_KEY } from '@/utils/jwt';
@@ -34,6 +35,7 @@ app.use("/api/v1/auth",authRouter)
 app.use("/api/v1/user",userRouter)
 app.use("/api/v1/guvernment-entity",guvernmentEntityRouter)
 app.use("/api/v1/form",formRouter)
+app.use("/api/v1/form-data",formDataRouter)
 app.use("/api/v1/topic",topicRouter)
 app.use("/api/v1/field",fieldRouter)
 app.use("/api/v1/rol",rolRouter)

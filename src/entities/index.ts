@@ -4,7 +4,6 @@ import { GuvernmentEntity } from "@/entities/GuvernmentEntity";
 import { Field } from "@/entities/Field";
 import { Form } from "@/entities/Form";
 import { Topic } from "@/entities/Topic";
-import {TopicConfig} from "@/entities/TopicConfig"
 import {FormData} from "@/entities/FormData"
 
 export { 
@@ -14,6 +13,5 @@ export {
   Field, 
   Form, 
   Topic, 
-  TopicConfig, 
   FormData
 };

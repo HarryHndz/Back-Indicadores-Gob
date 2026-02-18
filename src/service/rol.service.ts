@@ -23,3 +23,5 @@ export class RolService{
     return this.rolRepository.delete(id)
   }
 }
+
+export type TRolService = typeof RolService.prototype

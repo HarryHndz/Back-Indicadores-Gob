@@ -1,5 +1,5 @@
 import { Entity,PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, Relation, CreateDateColumn } from "typeorm";
-import { Form } from "@/entities/index";
+import { Form, Topic } from "@/entities/index";
 
 @Entity()
 export class Field{
@@ -18,6 +18,12 @@ export class Field{
   @Column({length:50,type:"varchar"})
   type!:string
 
+  @Column({length:50,type:"varchar"})
+  yearFiscal!:string
+
+  @Column({length:50,type:"varchar"})
+  update_period!:string
+
   @CreateDateColumn({default: new Date()})
   createdAt!: Date
 
@@ -33,6 +39,7 @@ export class Field{
   @Column({ type: "varchar", nullable: true })
   depends_on_value!: string;
 
+
   @ManyToOne(() => Field, { nullable: true })
   @JoinColumn({ name: "id_depends_on_field" })
   dependsOnField!: Relation<Field>;
@@ -43,4 +50,10 @@ export class Field{
   @JoinColumn({ name: "id_form" })
   form!: Relation<Form>
 
+  @ManyToOne(() => Topic, (topic) => topic.fields, {
+    nullable: true,
+    onDelete: "SET NULL",
+  })
+  @JoinColumn({ name: "id_topic" })
+  topic!: Relation<Topic> | null;
 }

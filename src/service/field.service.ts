@@ -15,6 +15,7 @@ export class FieldService{
           id:formId
         }
       },
+      relations: ['dependsOnField'],
       order:{
         order_index: 'ASC'
       }
@@ -34,6 +35,15 @@ export class FieldService{
   }
   async delete(id:number){
     return this.fieldRepository.delete(id)
+  }
+  async findAllByTopicId(topicId:number){
+    return this.fieldRepository.find({
+      where:{
+        topic:{
+          id:topicId
+        }
+      }
+    })
   }
 }
 

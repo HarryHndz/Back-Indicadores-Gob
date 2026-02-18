@@ -1,5 +1,5 @@
 import { Entity,PrimaryGeneratedColumn,Column,CreateDateColumn,ManyToOne,JoinColumn,OneToMany, Relation } from "typeorm";
-import { GuvernmentEntity, TopicConfig } from "@/entities/index";
+import { GuvernmentEntity,Field, Form } from "@/entities/index";
 
 
 @Entity()
@@ -16,10 +16,11 @@ export class Topic {
   @CreateDateColumn()
   createdAt!: Date;
 
-  @ManyToOne(() => GuvernmentEntity, (ge) => ge.topic)
-  @JoinColumn({ name: "id_government_entity" })
-  governmentEntity!: Relation<GuvernmentEntity>;
+  @ManyToOne(() => Form, (form) => form.topic)
+  @JoinColumn({ name: "id_form" })
+  form!: Relation<Form>;
 
-  @OneToMany(() => TopicConfig, (config) => config.topic)
-  fieldConfigs!: Relation<TopicConfig>[];
+  @OneToMany(() => Field, (field) => field.topic)
+  fields!: Relation<Field>[];
+
 }

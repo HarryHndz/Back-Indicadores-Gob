@@ -1,5 +1,5 @@
 import { Entity,PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn,OneToMany, Relation, CreateDateColumn } from "typeorm";
-import { Field, FormData,GuvernmentEntity } from "@/entities/index"
+import { Field, FormData,GuvernmentEntity, Topic } from "@/entities/index"
 
 
 @Entity()
@@ -25,4 +25,7 @@ export class Form{
 
   @OneToMany(() => FormData, (formData) => formData.form)
   formData!: Relation<FormData>[]
+
+  @OneToMany(() => Topic, (topic) => topic.form)
+  topic!: Relation<Topic>[]
 }

@@ -21,11 +21,11 @@ export class TopicService{
   async delete(id:number){
     return this.topicRepository.delete(id)
   }
-  async findAllByGovernmentEntityId(governmentEntityId:number){
+  async findByFormId(formId:number){
     return this.topicRepository.find({
       where: {
-        governmentEntity: {
-          id: governmentEntityId
+        form: {
+          id: formId
         }
       }
     })

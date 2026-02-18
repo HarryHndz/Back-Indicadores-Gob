@@ -5,7 +5,8 @@ import {
   userRouter, 
   formRouter, 
   topicRouter, 
-  fieldRouter 
+  fieldRouter,
+  rolRouter 
 } from "@/routes";
 import { expressjwt } from 'express-jwt'
 import { SECRET_KEY } from '@/utils/jwt';
@@ -35,6 +36,8 @@ app.use("/api/v1/guvernment-entity",guvernmentEntityRouter)
 app.use("/api/v1/form",formRouter)
 app.use("/api/v1/topic",topicRouter)
 app.use("/api/v1/field",fieldRouter)
+app.use("/api/v1/rol",rolRouter)
+
 app.use((err:any, req:Request, res:Response, next:Function) => {
   if(err.name === 'UnauthorizedError'){
     res.status(401).send('Token invalido o no proporcionado');

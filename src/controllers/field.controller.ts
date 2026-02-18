@@ -32,6 +32,7 @@ export class FieldController{
       fieldData.order_index = req.body.order_index
       fieldData.depends_on_value = req.body.depends_on_value
       fieldData.dependsOnField = req.body.dependsOnField
+      fieldData.topic = req.body.topicId
       const field = await this.fieldService.create(fieldData)
       res.status(201).json({
         message:"Campo creado correctamente",
@@ -54,6 +55,7 @@ export class FieldController{
       fieldData.order_index = req.body.order_index
       fieldData.depends_on_value = req.body.depends_on_value
       fieldData.dependsOnField = req.body.dependsOnField
+      fieldData.topic = req.body.topicId
       const field = await this.fieldService.update(Number(id),fieldData)
       res.status(200).json({
         message:"Campo actualizado correctamente",

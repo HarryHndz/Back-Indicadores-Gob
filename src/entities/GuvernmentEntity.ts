@@ -1,4 +1,4 @@
-import { Entity,PrimaryGeneratedColumn,Column,OneToMany,Relation } from "typeorm";
+import { Entity,PrimaryGeneratedColumn,Column,OneToMany,Relation, JoinColumn, ManyToOne } from "typeorm";
 import {User,Form,Topic} from "@/entities/index"
 
 @Entity()
@@ -18,12 +18,17 @@ export class GuvernmentEntity {
   @Column({default: new Date(),type:"timestamp"})
   createdAt!: Date
 
+  @Column({default: false,type:"boolean"})
+  isHaveSubGubernment!: boolean
+
+  @ManyToOne(() => GuvernmentEntity,{nullable:true})
+  @JoinColumn({name:"id_parent_gubernment"})
+  parentGubernment!: Relation<GuvernmentEntity>
+  
   @OneToMany(() => User, (user) => user.guvernment)
   users!: Relation<User>[]
 
   @OneToMany(() => Form, (form) => form.guvernment)
   forms!: Relation<Form>[]    
 
-  @OneToMany(() => Topic, (topic) => topic.governmentEntity)
-  topic!: Relation<Topic>[]
 }

@@ -8,7 +8,6 @@ import {
   Field, 
   Form, 
   Topic, 
-  TopicConfig, 
   FormData 
 } from '@/entities/index';
 env.config();
@@ -29,7 +28,6 @@ export const AppDataSource = new DataSource({
     Field, 
     Form, 
     Topic, 
-    TopicConfig, 
     FormData
   ],
   migrations:["src/migrations/*.ts"],

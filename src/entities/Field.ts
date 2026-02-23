@@ -12,17 +12,14 @@ export class Field{
   @Column({length:150,type:"varchar"})
   label!: string
 
+  @Column({length:250,type:"varchar"})
+  placeholder!: string
+
   @Column({default: true,type:"boolean"})
   active!: boolean
 
   @Column({length:50,type:"varchar"})
   type!:string
-
-  @Column({length:50,type:"varchar"})
-  yearFiscal!:string
-
-  @Column({length:50,type:"varchar"})
-  update_period!:string
 
   @CreateDateColumn({default: new Date()})
   createdAt!: Date

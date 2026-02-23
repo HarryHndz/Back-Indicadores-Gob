@@ -6,7 +6,6 @@ const baseUserBodySchema = z
     name: z.string().min(1).max(150),
     email: z.email().min(1).max(150),
     password: z.string().min(6).max(150),
-    active: z.boolean().optional(),
     id_rol: z.number().int().positive(),
     id_guvernment: z.number().int().positive(),
   })

@@ -1,14 +1,16 @@
 import { hashPassword } from "@/utils";
 import { UserService } from "../service/user.service";
 import { Request, Response } from "express";
-
+import { User } from "@/entities";
+import { RolService } from "@/service/rol.service";
+import { GuvernmentEntityService } from "@/service/guvernment-entity.service";
 export class UserController{
   private userService: UserService
   constructor(){
     this.userService = new UserService()
   }
 
-  async findById(req:Request,res:Response){
+  findById = async (req:Request,res:Response)=>{
     try {
       const {id} = req.params
       const user = await this.userService.findById(Number(id))
@@ -22,28 +24,72 @@ export class UserController{
     }
   }
 
-  async findAll(req:Request,res:Response){
+  findAll = async (req:Request,res:Response)=>{
     try {
       const users = await this.userService.findAll()
-      res.status(200).json({ message: "Users found successfully", users }) 
+      const userFormatted = users.map((user)=>{
+        return {
+          id:user.id,
+          name:user.name,
+          email:user.email,
+          active:user.active,
+          id_rol:user.rol.id,
+          role_name:user.rol.name,
+          created_at:user.createdAt,
+          id_guvernment:user.guvernment.id,
+          guvernment_name:user.guvernment.name,
+        }
+      })
+      return res.status(200).json({ 
+        message: "Users found successfully", 
+        data:userFormatted
+      }) 
     } catch (error) {
       console.error(error)
       res.status(500).json({ message: "Internal server error" })
     }
   }
 
-  async create(req:Request,res:Response){
+  create = async (req:Request,res:Response)=>{
     try {
+      const rolService = new RolService()
+      const rolUser = await rolService.findById(Number(req.body.id_rol))
+      if (!rolUser) {
+        return res.status(404).json({ message: "El rol no existe" })
+      }
+
+      const guvernmentService = new GuvernmentEntityService()
+      const guvernmentUser = await guvernmentService.findById(Number(req.body.id_guvernment))
+      if (!guvernmentUser) {
+        return res.status(404).json({ message: "La entidad gubernamental no existe" })
+      }
       const password = await hashPassword(req.body.password)
-      const user = await this.userService.create({...req.body,password})
-      res.status(201).json({ message: "User created successfully", user }) 
+      const userCreated = new User()
+      userCreated.name = req.body.name
+      userCreated.email = req.body.email
+      userCreated.password = password
+      userCreated.active = true
+      userCreated.rol = rolUser
+      userCreated.guvernment = guvernmentUser
+      const user = await this.userService.create(userCreated)
+      res.status(201).json({ 
+        message: "User created successfully",
+        data:{
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          role_name: user.rol.name,
+          id_rol:user.rol.id,
+          government_name: user.guvernment.name,
+          id_government: user.guvernment.id,
+      } }) 
     } catch (error) {
       console.error(error)
       res.status(500).json({ message: "Internal server error" })
     }
   }
 
-  async update(req:Request,res:Response){
+  update = async (req:Request,res:Response)=>{
     try {
       const {id} = req.params
       const newPassword = await hashPassword(req.body.password)
@@ -55,7 +101,7 @@ export class UserController{
     }
   }
 
-  async delete(req:Request,res:Response){
+  delete = async (req:Request,res:Response)=>{
     try {
       const {id} = req.params
       const userExist = await this.userService.findById(Number(id))

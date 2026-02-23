@@ -8,6 +8,7 @@ const router = Router();
 const topicController = new TopicController();
 
 router.get("/", topicController.findAll);
+router.get("/form/:formId", topicController.findAllByFormId);
 router.get("/:id", topicController.findById);
 router.post("/", validateTopicData, topicController.create);
 router.put(

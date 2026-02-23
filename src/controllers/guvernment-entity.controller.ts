@@ -8,19 +8,17 @@ export class GuvernmentEntityController{
     this.guvernmentEntityService = new GuvernmentEntityService()
   }
 
-  async findAll(req:Request,res:Response){
+  findAll = async (req:Request,res:Response)=>{
     try {
-      const guvernmentEntity = await this.guvernmentEntityService.findAll()
-      res.status(200).json({
-        message:"Entidades gubernamentales obtenidas correctamente",
-        data:guvernmentEntity
-      })
+      const guvernmentEntities = await this.guvernmentEntityService.findAll()
+      res.status(200).json({ message: "Guvernment entities found successfully", data: guvernmentEntities })
     } catch (error) {
-      res.status(500).json({message:"Error al obtener las entidades gubernamentales"})
+      console.error(error)
+      res.status(500).json({ message: "Internal server error" })
     }
   }
 
-  async findById(req:Request,res:Response){
+  findById = async (req:Request,res:Response)=>{
     try {
       const id = Number(req.params.id)
       const guvernmentEntity = await this.guvernmentEntityService.findById(id)
@@ -36,7 +34,7 @@ export class GuvernmentEntityController{
     }
   }
 
-  async create(req:Request,res:Response){
+  create = async (req:Request,res:Response)=>{
     try {
       const guvernmentEntity = await this.guvernmentEntityService.create(req.body)
       res.status(200).json({
@@ -48,7 +46,7 @@ export class GuvernmentEntityController{
     }
   }
 
-  async update(req:Request,res:Response){
+  update = async (req:Request,res:Response)=>{
     try {
       const id = Number(req.params.id)
       const guvernmentEntity = await this.guvernmentEntityService.findById(id)
@@ -65,7 +63,7 @@ export class GuvernmentEntityController{
     }
   }
 
-  async delete(req:Request,res:Response){
+  delete = async (req:Request,res:Response)=>{
     try {
       const id = Number(req.params.id)
       const guvernmentEntity = await this.guvernmentEntityService.findById(id)

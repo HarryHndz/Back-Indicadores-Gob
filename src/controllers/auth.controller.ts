@@ -1,48 +1,53 @@
 import { Request, Response } from "express";
-import { UserService } from "@/service/user.service";
+import { TUserService,UserService } from "@/service/user.service";
 import { comparePassword, generateToken } from "@/utils";
 
 export class AuthController {
-  private userService: UserService;
+  private userService: TUserService;
 
   constructor() {
     this.userService = new UserService();
   }
 
-  async login(req: Request, res: Response) {
+  login =async(req: Request, res: Response)=> {
     try {
       const { email, password } = req.body;
+      console.log(email, password);
       const user = await this.userService.findByEmail(email);
       if (!user) {
-        return res.status(401).json({ message: "Invalid credentials" });
+        return res.status(401).json({ message: "Usuario no encontrado" });
       }
 
       if (!user.active) {
-        return res.status(401).json({ message: "User is inactive" });
+        return res.status(401).json({ message: "Usuario inactivo" });
       }
 
       const isPasswordValid = await comparePassword(password, user.password);
 
       if (!isPasswordValid) {
-        return res.status(401).json({ message: "Invalid credentials" });
+        return res.status(401).json({ message: "Contraseña incorrecta" });
       }
 
       const token = generateToken({ 
         id: user.id, 
         email: user.email, 
-        role: user.rol, 
-        government: user.guvernment 
+        role_name: user.rol.name,
+        id_rol: user.rol.id,
+        government_name: user.guvernment.name,
+        id_government: user.guvernment.id,
       });
 
       return res.status(200).json({
         message: "Login successful",
-        token,
-        user: {
+        data:{
+          token,
           id: user.id,
           name: user.name,
           email: user.email,
-          role: user.rol,
-          government: user.guvernment
+          role_name: user.rol.name,
+          id_rol: user.rol.id,
+          government_name: user.guvernment.name,
+          id_government: user.guvernment.id,
         }
       });
 
@@ -52,7 +57,7 @@ export class AuthController {
     }
   }
 
-  async logout(req: Request, res: Response) {
+  logout = async(req: Request, res: Response)=> {
     try {
       return res.status(200).json({ message: "Logout successful" });
     } catch (error) {

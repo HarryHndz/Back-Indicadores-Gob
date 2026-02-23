@@ -9,7 +9,7 @@ const userContoller = new UserController();
 
 router.get("/", userContoller.findAll);
 router.get("/:id", userContoller.findById);
-router.post("/", validateUserData, userContoller.create);
+router.post("/register", validateUserData, userContoller.create);
 router.put(
   "/:id",
   validateUserData,

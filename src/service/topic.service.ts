@@ -27,6 +27,16 @@ export class TopicService{
         form: {
           id: formId
         }
+      },
+      select:{
+        id:true,
+        name:true,
+        form:{
+          id:true
+        }
+      },
+      relations:{
+        form:true
       }
     })
   }

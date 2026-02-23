@@ -9,7 +9,30 @@ export class FormService{
   }
 
   async findAll(){
-    return this.formRepository.find()
+    return this.formRepository.find({
+      relations:{
+        guvernment:true,
+        fields:true,
+        formData:true,
+      },
+      select:{
+        id:true,
+        name:true,
+        active:true,
+        createdAt:true,
+        description:true,
+        guvernment:{
+          id:true,
+          name:true,
+        },
+        fields:{
+          id:true
+        },
+        formData:{
+          id:true,
+        }
+      }
+    })
   }
 
   async findById(id:number){
@@ -26,6 +49,37 @@ export class FormService{
 
   async delete(id:number){
     return this.formRepository.delete(id)
+  }
+  async findAllByGubernmentId(gubernmentId:number){
+    return this.formRepository.find({
+      where:{
+        guvernment:{
+          id:gubernmentId
+        }
+      },
+      relations:{
+        guvernment:true,
+        fields:true,
+        formData:true,
+      },
+      select:{
+        id:true,
+        name:true,
+        active:true,
+        createdAt:true,
+        description:true,
+        guvernment:{
+          id:true,
+          name:true,
+        },
+        fields:{
+          id:true
+        },
+        formData:{
+          id:true,
+        }
+      }
+    })
   }
 }
 

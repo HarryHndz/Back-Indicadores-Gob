@@ -16,7 +16,7 @@ export class FormDataController{
     this.topicService = new TopicService()
     this.formService = new FormService()
   }
-  async findAll(req:Request,res:Response){
+  findAll = async(req:Request,res:Response)=>{
     try {
       const {formId} = req.query
       if (formId) {
@@ -35,7 +35,7 @@ export class FormDataController{
       res.status(500).json({message:"Error al obtener los FormData"})
     }
   }
-  async findById(req:Request,res:Response){
+  findById = async(req:Request,res:Response)=>{
     try {
       const {id} = req.params
       const formData = await this.formDataService.findById(Number(id))
@@ -50,7 +50,7 @@ export class FormDataController{
       res.status(500).json({message:"Error al obtener el FormData"})
     }
   }
-  async create(req:Request,res:Response){
+  create = async(req:Request,res:Response)=>{
     try {
       const formInfo = req.body
       const {formId,inputsData,topicId,isDividedByTopic} = formInfo
@@ -127,7 +127,7 @@ export class FormDataController{
       res.status(500).json({message:"Error al crear el FormData"})
     }
   }
-  async update(req:Request,res:Response){
+  update = async(req:Request,res:Response)=>{
     try {
       const {id} = req.params
       const formInfo = req.body
@@ -209,7 +209,7 @@ export class FormDataController{
       res.status(500).json({message:"Error al actualizar el FormData"})
     }
   }
-  async delete(req:Request,res:Response){
+  delete = async(req:Request,res:Response)=>{
     try {
       const {id} = req.params
       const formData = await this.formDataService.findById(Number(id))
@@ -224,7 +224,7 @@ export class FormDataController{
       res.status(500).json({message:"Error al eliminar el FormData"})
     }
   }
-  async findByTopicId(req:Request,res:Response){
+  findByTopicId = async(req:Request,res:Response)=>{
     try {
       const {topicId} = req.query
       const formData = await this.formDataService.findByTopicId(Number(topicId))

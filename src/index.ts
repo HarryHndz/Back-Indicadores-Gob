@@ -1,4 +1,5 @@
 import express, { type Request, type Response } from 'express';
+import cors from 'cors';
 import { 
   authRouter, 
   guvernmentEntityRouter, 
@@ -18,17 +19,23 @@ export const app = express();
 
 
 app.use(express.json());
+app.use(cors({
+  origin: process.env.FRONTEND_URL || 'http://localhost:4200',
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
 app.use(expressjwt({
   secret:SECRET_KEY,
   algorithms:['HS256']
 }).unless({
   path:[
     '/api/v1/auth/login',
-    '/'
+    '/',
+    '/api/v1/user/register'
   ]
 })
 )
-app.get('/', (req: Request, res: Response) => {
+app.get('/', (_req: Request, res: Response) => {
   res.send('¡Hola! servidor funcionando')
 })
 app.use("/api/v1/auth",authRouter)
@@ -42,8 +49,10 @@ app.use("/api/v1/rol",rolRouter)
 
 app.use((err:any, req:Request, res:Response, next:Function) => {
   if(err.name === 'UnauthorizedError'){
-    res.status(401).send('Token invalido o no proporcionado');
+    res.status(401).json({ message: 'Token invalido o no proporcionado' });
   } else {
-    next(err);
+    res.status(500).json({ message: 'Error interno del servidor' });
   }
 });
+
+export default app;

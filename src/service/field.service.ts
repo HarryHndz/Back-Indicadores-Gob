@@ -15,7 +15,27 @@ export class FieldService{
           id:formId
         }
       },
-      relations: ['dependsOnField'],
+      select:{
+        id:true,
+        label:true,
+        key:true,
+        validations:true,
+        active:true,
+        placeholder:true,
+        options:true,
+        order_index:true,
+        type:true,
+        form:{
+          id:true
+        },
+        topic:{
+          id:true
+        }
+      },
+      relations:{
+        form:true,
+        topic:true,
+      },
       order:{
         order_index: 'ASC'
       }

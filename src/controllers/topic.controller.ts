@@ -6,16 +6,8 @@ export class TopicController{
   constructor(){
     this.topicService = new TopicService()
   }
-  async findAll(req:Request,res:Response){
+  findAll = async(req:Request,res:Response)=>{
     try {
-      const governmentEntityId = req.query.governmentEntityId as string
-      if (governmentEntityId) {
-        const topics = await this.topicService.findAllByGovernmentEntityId(Number(governmentEntityId))
-        return res.status(200).json({
-          message:"Temas encontrados correctamente",
-          data:topics
-        })
-      }
       const topics = await this.topicService.findAll()
       return res.status(200).json({
         message:"Temas encontrados correctamente",
@@ -28,7 +20,7 @@ export class TopicController{
       })
     }
   }
-  async findById(req:Request,res:Response){
+  findById = async(req:Request,res:Response)=>{
     try {
       const {id} = req.params
 
@@ -49,7 +41,7 @@ export class TopicController{
       })
     }
   }
-  async create(req:Request,res:Response){
+  create = async(req:Request,res:Response)=>{
     try {
       const topicData = req.body
       const topic = await this.topicService.create(topicData)
@@ -64,7 +56,7 @@ export class TopicController{
       })
     }
   }
-  async update(req:Request,res:Response){
+  update = async(req:Request,res:Response)=>{
     try {
       const {id} = req.params
       const topicData = req.body
@@ -86,7 +78,7 @@ export class TopicController{
       })
     }
   }
-  async delete(req:Request,res:Response){
+  delete = async(req:Request,res:Response)=>{
     try {
       const {id} = req.params
       const topicExist = await this.topicService.findById(Number(id))
@@ -103,6 +95,28 @@ export class TopicController{
     } catch (error) {
       return res.status(500).json({
         message:"Error al eliminar el tema",
+        error:error
+      })
+    }
+  }
+  findAllByFormId = async(req:Request,res:Response)=>{
+    try {
+      const {formId} = req.params
+      const topics = await this.topicService.findByFormId(Number(formId))
+      const topicsFormatted = topics.map((topic)=>{
+        return {
+          id:topic.id,
+          name:topic.name,
+          id_form:topic.form.id
+        }
+      })
+      return res.status(200).json({
+        message:"Temas encontrados correctamente",
+        data:topicsFormatted
+      })
+    } catch (error) {
+      res.status(500).json({
+        message:"Error al encontrar los temas",
         error:error
       })
     }

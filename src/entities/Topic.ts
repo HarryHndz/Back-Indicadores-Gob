@@ -13,6 +13,12 @@ export class Topic {
   @Column({ default: true,type:"boolean" })
   active!: boolean;
 
+  @Column({length:50,type:"varchar",nullable:true})
+  yearFiscal!:string | null
+
+  @Column({length:50,type:"varchar",nullable:true})
+  update_period!:string | null
+
   @CreateDateColumn()
   createdAt!: Date;
 

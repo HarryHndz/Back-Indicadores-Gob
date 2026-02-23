@@ -10,8 +10,17 @@ export class Form{
   @Column({length:150,type:"varchar"})
   name!: string
 
+  @Column({length:250,type:"varchar"})
+  description!: string
+
   @Column({default: true,type:"boolean"})
   active!: boolean
+
+  @Column({length:50,type:"varchar",nullable:true})
+  yearFiscal!:string | null
+
+  @Column({length:50,type:"varchar",nullable:true})
+  update_period!:string | null
 
   @CreateDateColumn({default: new Date()})
   createdAt!: Date

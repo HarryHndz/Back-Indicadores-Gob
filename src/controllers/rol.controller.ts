@@ -7,7 +7,7 @@ export class RolController{
   constructor(){
     this.rolService = new RolService()
   }
-  async findAll(req:Request,res:Response){
+  findAll = async(req:Request,res:Response)=>{
     try {
       const roles = await this.rolService.findAll()
       return res.status(200).json({
@@ -18,7 +18,7 @@ export class RolController{
       return res.status(500).json({message:"Error al obtener los roles"})
     }
   }
-  async findById(req:Request,res:Response){
+  findById = async(req:Request,res:Response)=>{
     try {
       const {id} = req.params
       const role = await this.rolService.findById(Number(id))
@@ -33,7 +33,7 @@ export class RolController{
       return res.status(500).json({message:"Error al obtener el rol"})
     }
   }
-  async create(req:Request,res:Response){
+  create = async(req:Request,res:Response)=>{
     try {
       const data = req.body
       const dataRol = new Rol()
@@ -48,7 +48,7 @@ export class RolController{
       return res.status(500).json({message:"Error al crear el rol"})
     }
   }
-  async update(req:Request,res:Response){
+  update = async(req:Request,res:Response)=>{
     try {
       const {id} = req.params
       const data = req.body
@@ -68,7 +68,7 @@ export class RolController{
       return res.status(500).json({message:"Error al actualizar el rol"})
     }
   }
-  async delete(req:Request,res:Response){
+  delete = async(req:Request,res:Response)=>{
     try {
       const {id} = req.params
       const role = await this.rolService.findById(Number(id))

@@ -1,3 +1,4 @@
+import { Form } from "@/entities";
 import { FormService, TFormService } from "@/service/form.service";
 import { GuvernmentEntityService, TGuvernmentEntityService } from "@/service/guvernment-entity.service";
 import { Request, Response } from "express";
@@ -79,10 +80,18 @@ export class FormController{
 
   create = async (req:Request,res:Response)=>{
     try {
-      const form = await this.formService.create(req.body)
+      const form_data = new Form()
+      const form = req.body
+      form_data.name = form.name
+      form_data.description = form.description
+      form_data.active = true
+      form_data.yearFiscal = form?.year_fiscal ?? undefined
+      form_data.update_period = form?.update_period ?? undefined
+      form_data.guvernment = form.id_guvernment 
+      const form_created = await this.formService.create(form_data)
       return res.status(201).json({
         message:"Formulario creado correctamente",
-        data:form
+        data:form_created
       })
     } catch (error) {
       res.status(500).json({message:"Error al crear el formulario"})
@@ -96,7 +105,15 @@ export class FormController{
       if(!formExist){
         return res.status(404).json({message:"Formulario no encontrado"})
       }
-      const formUpdated = await this.formService.update(Number(id),req.body)
+      const form = req.body
+      const form_data = new Form()
+      form_data.name = form.name
+      form_data.description = form.description
+      form_data.active = true
+      form_data.yearFiscal = form?.year_fiscal ?? undefined
+      form_data.update_period = form?.update_period ?? undefined
+      form_data.guvernment = form.id_guvernment 
+      const formUpdated = await this.formService.update(Number(id),form_data)
       return res.status(200).json({
         message:"Formulario actualizado correctamente",
         data:formUpdated

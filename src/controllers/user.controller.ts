@@ -17,7 +17,19 @@ export class UserController{
       if(!user){
         return res.status(404).json({ message: "User not found" })
       }
-      res.status(200).json({ message: "User found successfully", user }) 
+      res.status(200).json({ message: "User found successfully",
+        data:{
+          id:user.id,
+          name:user.name,
+          email:user.email,
+          status:user.active,
+          id_rol:user.rol.id,
+          role_name:user.rol.name,
+          created_at:user.createdAt,
+          id_guvernment:user.guvernment.id,
+          guvernment_name:user.guvernment.name,
+        }
+      }) 
     } catch (error) {
       console.error(error)
       res.status(500).json({ message: "Internal server error" })
@@ -92,8 +104,31 @@ export class UserController{
   update = async (req:Request,res:Response)=>{
     try {
       const {id} = req.params
-      const newPassword = await hashPassword(req.body.password)
-      const user = await this.userService.update(Number(id),{...req.body,password:newPassword})
+      const userExist = await this.userService.findById(Number(id))
+      if (!userExist) {
+        return res.status(404).json({ message: "User not found" })
+      }
+      const rolService = new RolService()
+      const rolUser = await rolService.findById(Number(req.body.id_rol))
+      if (!rolUser) {
+        return res.status(404).json({ message: "El rol no existe" })
+      }
+      const guvernmentService = new GuvernmentEntityService()
+      const guvernmentUser = await guvernmentService.findById(Number(req.body.id_guvernment))
+      if (!guvernmentUser) {
+        return res.status(404).json({ message: "La entidad gubernamental no existe" })
+      }
+      const user_data = req.body
+      const user_entity = new User()
+      user_entity.name = user_data.name
+      user_entity.email = user_data.email
+      user_entity.rol = rolUser
+      user_entity.guvernment = guvernmentUser
+      if (user_data.password || user_data.password !== "") {
+        const newPassword = await hashPassword(req.body.password)
+        user_entity.password = newPassword
+      }
+      const user = await this.userService.update(Number(id),user_entity)
       res.status(200).json({ message: "User updated successfully", user }) 
     } catch (error) {
       console.error(error)

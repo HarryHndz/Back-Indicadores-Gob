@@ -1,3 +1,4 @@
+import { Topic } from "@/entities";
 import { TopicService, TTopicService } from "@/service/topic.service";
 import { Request, Response } from "express";
 
@@ -43,11 +44,17 @@ export class TopicController{
   }
   create = async(req:Request,res:Response)=>{
     try {
-      const topicData = req.body
-      const topic = await this.topicService.create(topicData)
+      const topic = req.body
+      const topic_data = new Topic()
+      topic_data.name = topic.name
+      topic_data.active = true
+      topic_data.yearFiscal = topic.year_fiscal
+      topic_data.update_period = topic.update_period
+      topic_data.form = topic.id_form
+      const topic_created = await this.topicService.create(topic_data)
       return res.status(201).json({
         message:"Tema creado correctamente",
-        data:topic
+        data:topic_created
       })
     } catch (error) {
       return res.status(500).json({
@@ -59,17 +66,23 @@ export class TopicController{
   update = async(req:Request,res:Response)=>{
     try {
       const {id} = req.params
-      const topicData = req.body
+      const topic = req.body
       const topicExist = await this.topicService.findById(Number(id))
       if(!topicExist){
         return res.status(404).json({
           message:"Tema no encontrado"
         })
       }
-      const topic = await this.topicService.update(Number(id),topicData)
+      const topic_data = new Topic()
+      topic_data.name = topic.name
+      topic_data.active = true
+      topic_data.yearFiscal = topic.year_fiscal
+      topic_data.update_period = topic.update_period
+      topic_data.form = topic.id_form
+      const topic_updated = await this.topicService.update(Number(id),topic_data)
       return res.status(200).json({
         message:"Tema actualizado correctamente",
-        data:topic
+        data:topic_updated
       })
     } catch (error) {
       return res.status(500).json({
@@ -107,7 +120,12 @@ export class TopicController{
         return {
           id:topic.id,
           name:topic.name,
-          id_form:topic.form.id
+          id_form:topic.form.id,
+          form_name:topic.form.name,
+          active:topic.active,
+          createdAt:topic.createdAt,
+          year_fiscal:topic.yearFiscal ?? undefined,
+          update_period:topic.update_period ?? undefined
         }
       })
       return res.status(200).json({

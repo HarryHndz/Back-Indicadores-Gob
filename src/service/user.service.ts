@@ -9,7 +9,28 @@ export class UserService{
   }
 
   async findById(id:number){
-    return await this.userRepository.findOneBy({id})
+    return await this.userRepository.findOne({
+      where:{id},
+      relations:{
+        rol:true,
+        guvernment:true,
+      },
+      select:{
+        id:true,
+        name:true,
+        email:true,
+        active:true,
+        createdAt:true,
+        rol:{
+          id:true,
+          name:true,
+        },
+        guvernment:{
+          id:true,
+          name:true,
+        }
+      }
+    })
   }
   async findAll(){
     return await this.userRepository.find({

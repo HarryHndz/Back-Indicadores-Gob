@@ -25,14 +25,19 @@ export class TopicService{
     return this.topicRepository.find({
       where: {
         form: {
-          id: formId
+          id: formId,
         }
       },
       select:{
         id:true,
         name:true,
+        active:true,
+        createdAt:true,
+        yearFiscal:true,
+        update_period:true,
         form:{
-          id:true
+          id:true,
+          name:true
         }
       },
       relations:{

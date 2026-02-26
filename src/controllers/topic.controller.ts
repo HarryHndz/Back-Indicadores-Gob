@@ -1,4 +1,5 @@
 import { Topic } from "@/entities";
+import { FormService } from "@/service/form.service";
 import { TopicService, TTopicService } from "@/service/topic.service";
 import { Request, Response } from "express";
 
@@ -114,8 +115,18 @@ export class TopicController{
   }
   findAllByFormId = async(req:Request,res:Response)=>{
     try {
+      console.log(req.params)
+      console.log("entro aqui")
       const {formId} = req.params
+      const formService = new FormService()
+      const formExits = await formService.findById(Number(formId))
+      if(!formExits){
+        console.log("no encontro el formulario")
+        return res.status(404).json({message:"Formulario no encontrado"})
+      }
+      console.log("encontro el formulario")
       const topics = await this.topicService.findByFormId(Number(formId))
+      console.log("encontro los temas")
       const topicsFormatted = topics.map((topic)=>{
         return {
           id:topic.id,
@@ -128,9 +139,14 @@ export class TopicController{
           update_period:topic.update_period ?? undefined
         }
       })
+      console.log("formateo los temas")
       return res.status(200).json({
         message:"Temas encontrados correctamente",
-        data:topicsFormatted
+        data:{
+          topics:topicsFormatted,
+          total:topics.length,
+          form_name:formExits.name,
+        }
       })
     } catch (error) {
       res.status(500).json({

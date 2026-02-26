@@ -1,8 +1,7 @@
 import { GuvernmentEntity } from "@/entities";
 import { GuvernmentEntityService,TGuvernmentEntityService } from "@/service/guvernment-entity.service";
 import { Request, Response } from "express";
-
-
+const API_URL = 'http://localhost:3000'
 export class GuvernmentEntityController{
   private guvernmentEntityService: TGuvernmentEntityService
   constructor(){
@@ -12,7 +11,16 @@ export class GuvernmentEntityController{
   findAll = async (req:Request,res:Response)=>{
     try {
       const guvernmentEntities = await this.guvernmentEntityService.findAll()
-      res.status(200).json({ message: "Guvernment entities found successfully", data: guvernmentEntities })
+      const guvernmentFormatted = guvernmentEntities.map((guvernment)=>{
+        return {
+          id:guvernment.id,
+          name:guvernment.name,
+          description:guvernment.description,
+          image: `${API_URL}/${guvernment.image}`
+        }
+      })
+      console.log("guvernmentFormatted",guvernmentFormatted)
+      res.status(200).json({ message: "Guvernment entities found successfully", data: guvernmentFormatted })
     } catch (error) {
       console.error(error)
       res.status(500).json({ message: "Internal server error" })

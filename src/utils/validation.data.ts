@@ -30,10 +30,14 @@ const validateStringRule = (value: any, rule: string, ruleValue: any): boolean =
       return z.string().min(ruleValue).safeParse(value).success;
     case "max":
       return z.string().max(ruleValue).safeParse(value).success;
-    case "email":
-      return z.email().safeParse(value).success;
-    case "url":
-      return z.url().safeParse(value).success;
+    case "format":
+      if (ruleValue === "email") {
+        return z.email().safeParse(value).success;
+      } else if (ruleValue === "phone") {
+        return z.string().regex(/^\d{10}$/).safeParse(value).success;
+      } else {
+        return z.string().safeParse(value).success;
+      }
     default:
       return true;
   }
@@ -51,12 +55,18 @@ const validateNumberRule = (value: any, rule: string, ruleValue: any): boolean =
       return z.number().min(ruleValue).safeParse(numValue).success;
     case "max":
       return z.number().max(ruleValue).safeParse(numValue).success;
-    case "positive":
-      return z.number().positive().safeParse(numValue).success;
-    case "negative":
-      return z.number().negative().safeParse(numValue).success;
-    case "integer":
-      return z.number().int().safeParse(numValue).success;
+    case "number_type":
+      if (ruleValue === "integer") {
+        return z.number().int().safeParse(numValue).success;
+      } else {
+        return z.number().safeParse(numValue).success;
+      }
+    case "sign":
+      if (ruleValue === "positive") {
+        return z.number().positive().safeParse(numValue).success;
+      } else {
+        return z.number().negative().safeParse(numValue).success;
+      }
     default:
       return true;
   }

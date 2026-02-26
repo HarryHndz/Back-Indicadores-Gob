@@ -4,17 +4,23 @@ import { FieldService, TFieldService } from "@/service/field.service";
 import { validateFormData } from "@/utils/validation.data";
 import { TopicService, TTopicService } from "@/service/topic.service";
 import { FormService, TFormService } from "@/service/form.service";
-
+import { GuvernmentEntityService, TGuvernmentEntityService } from "@/service/guvernment-entity.service";
+import { FormData, Topic } from "@/entities";
+import { TUserService, UserService } from "@/service/user.service";
 export class FormDataController{
   private formDataService:TFormDataService
   private fieldService:TFieldService
   private topicService:TTopicService
   private formService:TFormService
+  private guvernmentService:TGuvernmentEntityService
+  private userService:TUserService
   constructor(){
     this.formDataService = new FormDataService()
     this.fieldService = new FieldService()
     this.topicService = new TopicService()
     this.formService = new FormService()
+    this.guvernmentService = new GuvernmentEntityService()
+    this.userService = new UserService()
   }
   findAll = async(req:Request,res:Response)=>{
     try {
@@ -53,12 +59,16 @@ export class FormDataController{
   create = async(req:Request,res:Response)=>{
     try {
       const formInfo = req.body
-      const {formId,inputsData,topicId,isDividedByTopic} = formInfo
-
-      if (!formId) {
+      const {formId,inputsData,topicId,isDividedByTopic,userId} = formInfo
+      let topic:Topic | null = null
+      if (!formId || !userId) {
         return res.status(400).json({
-          message: "El formId es requerido"
+          message: "El formId y userId son requeridos"
         })
+      }
+      const user = await this.userService.findById(Number(userId))
+      if (!user) {
+        return res.status(404).json({message:"Usuario no encontrado"})
       }
 
       if (!inputsData || !Array.isArray(inputsData) || inputsData.length === 0) {
@@ -67,6 +77,7 @@ export class FormDataController{
         })
       }
       const formExist = await this.formService.findById(Number(formId))
+      console.log("formExist",formExist)
       if (!formExist) {
         return res.status(404).json({message:"Formulario no encontrado"})
       }
@@ -78,12 +89,14 @@ export class FormDataController{
             message: "El Tema es requerido"
           })
         }
-
-        const topic = await this.topicService.findById(Number(topicId))
-        if (!topic) {
+        console.log("topicId",topicId)
+         topic = await this.topicService.findById(Number(topicId))
+        console.log("topic",topic)
+        if (!topic ) {
           return res.status(404).json({message:"Topic no encontrado"})
         }
-        if (formExist.topic.find(t=>t.id !== topic.id)) {
+        console.log("formExist.topic",formExist.topic.find(t=>t.id === topic?.id))
+        if (!formExist.topic.find(t=>t.id === topic?.id)) {
           return res.status(400).json({
             message: "El Tema no pertenece al Formulario"
           })
@@ -116,11 +129,19 @@ export class FormDataController{
           })
         }
       }
-
-      const formData = await this.formDataService.create(req.body)
+      const form = new FormData()
+      form.data = inputsData
+      form.edit = false
+      form.form = formExist
+      form.user = user
+      if (Number(isDividedByTopic) === 1 && topicId) {
+        form.topic = topic
+      }
+      
+      const form_created = await this.formDataService.create(form)
       res.status(201).json({
         message:"FormData creado correctamente",
-        data:formData
+        data:form_created
       })
     } catch (error) {
       console.error("Error al crear el FormData:", error)
@@ -235,6 +256,111 @@ export class FormDataController{
     }
     catch (error) {
       res.status(500).json({message:"Error al obtener el FormData por topic"})
+    }
+  }
+  
+  findAllByGuvernmentIdWithTopics = async (req:Request,res:Response)=>{
+    try {
+      const {id_government} = req.query
+      const guvernmentExits = await this.guvernmentService.findById(Number(id_government))
+      if(!guvernmentExits){
+        return res.status(404).json({message:"Entidad gubernamental no encontrada"})
+      }
+      const forms = await this.formService.findAllByGuvernmentIdWithTopics(Number(id_government))
+      console.log("forms",forms[0].topic)
+      const formsFormatted = forms.map((form)=>{
+        return {
+          id: form.id,
+          name: form.name,
+          description: form.description,
+          active: form.active,
+          id_guvernment: form.guvernment.id,
+          gubernment_name: form.guvernment.name,
+          created_at: form.createdAt,
+          topics:form.topic.map((topic)=>{
+            return {
+              id:topic?.id,
+              name:topic?.name,
+              id_form:form.id,
+              form_name:form.name,
+              year_fiscal:topic?.yearFiscal ?? undefined,
+              createdAt:topic?.createdAt,
+              update_period:topic?.update_period ?? undefined,
+            }
+          })
+        }
+      })
+      return res.status(200).json({
+        message:"Formularios con temas obtenidos correctamente",
+        data:formsFormatted
+      })
+    } catch (error) {
+      console.error("Error al obtener los formularios con temas:", error)
+      res.status(500).json({message:"Error al obtener los formularios con temas"})
+    }
+  }
+  findFormByIdWithFields = async(req:Request,res:Response)=>{
+    try {
+      const {id} = req.params
+      const form = await this.formService.findById(Number(id))
+      if(!form){
+        return res.status(404).json({message:"Formulario no encontrado"})
+      }
+      const fields = await this.fieldService.findAllByFormId(Number(id))
+      const fieldsFormatted = fields.map((field)=>{
+        return {
+          id:field.id,
+          name:field.key,
+          label:field.label,
+          type:field.type,
+          placeholder:field.placeholder,
+          options:field.options?.options ?? undefined,
+          validations:field.validations?.v ?? undefined,
+          id_form:field.form.id,
+          active:field.active,
+          createdAt:field.createdAt,
+        }
+      })
+      return res.status(200).json({
+        message:"Formulario con campos obtenido correctamente",
+        data:fieldsFormatted
+      })
+    } catch (error) {
+      console.error("Error al obtener el formulario con campos:", error)
+      res.status(500).json({message:"Error al obtener el formulario con campos"})
+    }
+  }
+  findFormByTopicIdWithFields = async(req:Request,res:Response)=>{
+    try {
+      const {topicId} = req.params
+      const topic = await this.topicService.findById(Number(topicId))
+      if(!topic){
+        return res.status(404).json({message:"Tema no encontrado"})
+      }
+
+      const fields = await this.fieldService.findAllByTopicId(Number(topicId))
+      const fieldsFormatted = fields.map((field)=>{
+        return {
+          id:field.id,
+          name:field.key,
+          label:field.label,
+          type:field.type,
+          placeholder:field.placeholder,
+          options:field.options?.options ?? undefined,
+          validations:field.validations?.v ?? undefined,
+          id_form:field.form.id,
+          id_topic:field.topic?.id ?? undefined,
+          active:field.active,
+          createdAt:field.createdAt,
+        }
+      })
+      return res.status(200).json({
+        message:"Formulario con campos obtenido correctamente",
+        data:fieldsFormatted
+      })
+    } catch (error) {
+      console.error("Error al obtener el formulario con campos por topic:", error)
+      res.status(500).json({message:"Error al obtener el formulario con campos por topic"})
     }
   }
 }

@@ -13,12 +13,17 @@ import {
 import { expressjwt } from 'express-jwt'
 import { SECRET_KEY } from '@/utils/jwt';
 import dotenv from 'dotenv';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
 dotenv.config();
 
 export const app = express();
-
-
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const publicPath = path.join(__dirname, 'public');
 app.use(express.json());
+app.use(express.static(publicPath))
 app.use(cors({
   origin: process.env.FRONTEND_URL || 'http://localhost:4200',
   methods: ['GET', 'POST', 'PUT', 'DELETE'],

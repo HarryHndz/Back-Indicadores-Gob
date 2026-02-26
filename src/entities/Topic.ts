@@ -1,5 +1,5 @@
 import { Entity,PrimaryGeneratedColumn,Column,CreateDateColumn,ManyToOne,JoinColumn,OneToMany, Relation } from "typeorm";
-import { GuvernmentEntity,Field, Form } from "@/entities/index";
+import { Field, Form } from "@/entities/index";
 
 
 @Entity()

@@ -9,6 +9,7 @@ const formController = new FormController();
 
 router.get("/", formController.findAll);
 router.get("/:id", formController.findById);
+router.get
 router.post("/", validateFormData, formController.create);
 router.put(
   "/:id",

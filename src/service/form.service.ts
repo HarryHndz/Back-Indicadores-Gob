@@ -36,7 +36,30 @@ export class FormService{
   }
 
   async findById(id:number){
-    return this.formRepository.findOneBy({id})
+    return this.formRepository.findOne({
+      where:{
+        id
+      },
+      select:{
+        id:true,
+        name:true,
+        active:true,
+        createdAt:true,
+        description:true,
+        guvernment:{
+          id:true,
+          name:true,
+        },
+        topic:{
+          id:true,
+          name:true,
+        },
+      },
+      relations:{
+        guvernment:true,
+        topic:true,
+      }
+    })
   }
 
   async create(form:Form){
@@ -77,6 +100,38 @@ export class FormService{
         },
         formData:{
           id:true,
+        }
+      }
+    })
+  }
+
+  async findAllByGuvernmentIdWithTopics(guvernmentId:number){
+    return this.formRepository.find({
+      where:{
+        guvernment:{
+          id:guvernmentId
+        }
+      },
+      relations:{
+        guvernment:true,
+        topic:true,
+      },
+      select:{
+        id:true,
+        name:true,
+        active:true,
+        createdAt:true,
+        description:true,
+        guvernment:{
+          id:true,
+          name:true,
+        },
+        topic:{
+          id:true,
+          name:true,
+          yearFiscal:true,
+          update_period:true,
+          createdAt:true,
         }
       }
     })

@@ -123,7 +123,11 @@ export class FieldController{
       })
       res.status(200).json({
         message:"Campos obtenidos correctamente",
-        data:fieldsFormatted
+        data:{
+          fields:fieldsFormatted,
+          total:fields.length,
+          form_name:formExits.name,
+        }
       })
     } catch (error) {
       console.log(error)

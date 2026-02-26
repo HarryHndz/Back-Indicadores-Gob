@@ -35,7 +35,11 @@ export class FormController{
         })
         return res.status(200).json({
           message:"Formularios obtenidos correctamente",
-          data:formsFormatted
+          data:{
+            forms:formsFormatted,
+            total:formsByGubernment.length,
+            guvernment_name:guvernamentExits.name,
+          }
         })
       }
       
@@ -55,7 +59,10 @@ export class FormController{
       })
       return res.status(200).json({
         message:"Formularios obtenidos correctamente",
-        data:formsFormatted
+        data:{
+          forms:formsFormatted,
+          total:forms.length,
+        }
       })
     } catch (error) {
       return res.status(500).json({message:"Error al obtener los formularios"})

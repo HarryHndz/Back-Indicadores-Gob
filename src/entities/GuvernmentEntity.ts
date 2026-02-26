@@ -18,6 +18,9 @@ export class GuvernmentEntity {
   @Column({default: new Date(),type:"timestamp"})
   createdAt!: Date
 
+  @Column({length:250,type:"varchar",nullable:true})
+  image!: string | null
+
   @Column({default: false,type:"boolean"})
   isHaveSubGubernment!: boolean
 

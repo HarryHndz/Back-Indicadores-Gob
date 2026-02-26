@@ -25,9 +25,9 @@ export class FormData {
   @JoinColumn({ name: "id_form" })
   form!: Relation<Form>;
 
-  @ManyToOne(() => Topic)
+  @ManyToOne(() => Topic,{nullable:true})
   @JoinColumn({ name: "id_topic" })
-  topic!: Relation<Topic>;
+  topic!: Relation<Topic> | null;
 
   @ManyToOne(() => User)
   @JoinColumn({ name: "id_user" })

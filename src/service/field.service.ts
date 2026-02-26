@@ -62,6 +62,30 @@ export class FieldService{
         topic:{
           id:topicId
         }
+      },
+      select:{
+        id:true,
+        key:true,
+        label:true,
+        type:true,
+        placeholder:true,
+        options:true,
+        validations:true,
+        order_index:true,
+        active:true,
+        createdAt:true,
+        form:{
+          id:true,
+          name:true
+        },
+        topic:{
+          id:true,
+          name:true
+        }
+      },
+      relations:{
+        form:true,
+        topic:true,
       }
     })
   }

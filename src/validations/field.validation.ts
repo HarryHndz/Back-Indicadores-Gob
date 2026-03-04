@@ -20,6 +20,7 @@ const baseFieldBodySchema = z.object({
   order_index: z.number().int().nonnegative().nullable().optional(),
   depends_on_value: z.string().nullable().optional(),
   id_depends_on_field: z.number().int().positive().nullable().optional(),
+  municipality_options: z.boolean().nullable().optional(),
 })
 
 

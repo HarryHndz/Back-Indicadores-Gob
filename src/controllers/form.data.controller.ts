@@ -14,6 +14,7 @@ export class FormDataController{
   private formService:TFormService
   private guvernmentService:TGuvernmentEntityService
   private userService:TUserService
+
   constructor(){
     this.formDataService = new FormDataService()
     this.fieldService = new FieldService()
@@ -22,22 +23,54 @@ export class FormDataController{
     this.guvernmentService = new GuvernmentEntityService()
     this.userService = new UserService()
   }
+
   findAll = async(req:Request,res:Response)=>{
     try {
       const {formId} = req.query
       if (formId) {
         const formData = await this.formDataService.findByFormId(Number(formId))
+        const formDataFormatted = formData.map((data)=>{
+          return {
+            id:data.id,
+            data:data.data,
+            id_topic: data.topic?.id ?? undefined,
+            edit:data.edit,
+            active:data.active,
+            created_at:data.createdAt,
+            id_form:data.form.id,
+            form_name:data.form.name,
+            topic_name:data.topic?.name ?? undefined,
+            id_user:data.user.id,
+            username:data.user.name,
+          }
+        })
         return res.status(200).json({
           message:"FormData por formulario obtenidos correctamente",
-          data:formData
+          data:formDataFormatted
         })
       }
       const formData = await this.formDataService.findAll()
-      res.status(200).json({
+      const formDataFormatted = formData.map((data)=>{
+        return {
+          id:data.id,
+          data:data.data,
+          id_topic: data.topic?.id ?? undefined,
+          edit:data.edit,
+          active:data.active,
+          created_at:data.createdAt,
+          id_form:data.form.id,
+          id_user:data.user.id,
+          username:data.user.name,
+          form_name:data.form.name,
+          topic_name:data.topic?.name ?? undefined,
+        }
+      })
+      return res.status(200).json({
         message:"FormData obtenidos correctamente",
-        data:formData
+        data:formDataFormatted
       })
     } catch (error) {
+      console.error("Error al obtener los FormData:", error)
       res.status(500).json({message:"Error al obtener los FormData"})
     }
   }
@@ -48,9 +81,21 @@ export class FormDataController{
       if (!formData) {
         return res.status(404).json({message:"FormData no encontrado"})
       }
-      res.status(200).json({
+      const formDataFormatted = {
+        id:formData.id,
+        data:formData.data,
+        id_topic: formData.topic?.id ?? undefined,
+        edit:formData.edit,
+        active:formData.active,
+        createdAt:formData.createdAt,
+        updatedAt:formData.updatedAt,
+        id_form:formData.form.id,
+        id_user:formData.user.id,
+        user_name:formData.user.name,
+      }
+      return res.status(200).json({
         message:"FormData obtenido correctamente",
-        data:formData
+        data:formDataFormatted
       })
     } catch (error) {
       res.status(500).json({message:"Error al obtener el FormData"})

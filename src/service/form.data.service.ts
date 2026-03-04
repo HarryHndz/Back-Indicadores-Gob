@@ -8,7 +8,32 @@ export class FormDataService {
     this.formDataRepository = AppDataSource.getRepository(FormData)
   }
   async findAll(){
-    return this.formDataRepository.find()
+    return this.formDataRepository.find({
+      select:{
+        id:true,
+        topic:{
+          id:true,
+          name:true,
+        },
+        form:{
+          id:true,
+          name:true,
+        },
+        user:{
+          id:true,
+          name:true,
+        },
+        data:true,
+        edit:true,
+        active:true,
+        createdAt:true,
+      },
+      relations:{
+        topic:true,
+        form:true,
+        user:true,
+      }
+    })
   }
   async findById(id:number){
     return this.formDataRepository.findOneBy({id})
@@ -28,6 +53,30 @@ export class FormDataService {
         form:{
           id:formId
         }
+      },
+      select:{
+        id:true,
+        topic:{
+          id:true,
+          name:true,
+        },
+        form:{
+          id:true,
+          name:true,
+        },
+        user:{
+          id:true,
+          name:true,
+        },
+        data:true,
+        edit:true,
+        active:true,
+        createdAt:true,
+      },
+      relations:{
+        topic:true,
+        form:true,
+        user:true,
       }
     })
   }

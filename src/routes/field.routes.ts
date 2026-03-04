@@ -9,6 +9,7 @@ const fieldController = new FieldController();
 
 router.get("/", fieldController.findAll);
 router.get("/validation", fieldController.validateField);
+router.get("/municipios", fieldController.findAllMunicipios);
 router.get("/:id", fieldController.findById);
 router.post("/", validateFieldData, fieldController.create);
 router.put(

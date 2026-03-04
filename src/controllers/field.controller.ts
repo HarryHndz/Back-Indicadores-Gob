@@ -4,6 +4,7 @@ import { Field } from "@/entities/index";
 import { FormService } from "@/service/form.service";
 import { TopicService } from "@/service/topic.service";
 import { DATA_TYPE_VALIDATION_RULES } from "@/utils/validation.rules";
+import { municipios } from "@/utils/municipios";
 
 
 export class FieldController{
@@ -35,7 +36,13 @@ export class FieldController{
       fieldData.topic = req.body.id_topic
       fieldData.validations = {v: req.body.validations}
       if(req.body.options){
-        fieldData.options = {options: req.body.options}
+        if(req.body.municipality_options){
+          fieldData.options = {
+            options: municipios.map((municipio)=>({label:municipio.name,value:municipio.id}))
+          }
+        }else{
+          fieldData.options = {options: req.body.options}
+        }
       }
       fieldData.order_index = req.body.order_index
       if(req.body.depends_on_value && req.body.id_depends_on_field){
@@ -161,6 +168,16 @@ export class FieldController{
     } catch (error) {
       res.status(500).json({message:"Error al obtener las validaciones"})
       
+    }
+  }
+  findAllMunicipios = async(req:Request,res:Response)=>{
+    try {
+      return res.status(200).json({
+        message:"Municipios obtenidos correctamente",
+        data:municipios
+      })
+    } catch (error) {
+      res.status(500).json({message:"Error al obtener los municipios"})
     }
   }
 }

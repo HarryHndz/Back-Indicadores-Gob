@@ -9,11 +9,42 @@ export class GuvernmentEntityService{
   }
 
   async findAll(){
-    return this.guvernmentEntityRepository.find()
+    return this.guvernmentEntityRepository.find({
+      select:{
+        id:true,
+        name:true,
+        description:true,
+        image:true,
+        isHaveSubGubernment:true,
+        parentGubernment:{
+          id:true,
+          name:true,
+        }
+      },
+      relations:{
+        parentGubernment:true,
+      }
+    })
   }
 
   async findById(id:number){
-    return this.guvernmentEntityRepository.findOneBy({id})
+    return this.guvernmentEntityRepository.findOne({
+      where:{id},
+      select:{
+        id:true,
+        name:true,
+        description:true,
+        image:true,
+        isHaveSubGubernment:true,
+        parentGubernment:{
+          id:true,
+          name:true,
+        }
+      },
+      relations:{
+        parentGubernment:true,
+      }
+    })
   }
 
   async create(guvernmentEntity:GuvernmentEntity){

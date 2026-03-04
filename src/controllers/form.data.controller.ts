@@ -29,7 +29,7 @@ export class FormDataController{
       const {formId} = req.query
       if (formId) {
         const formData = await this.formDataService.findByFormId(Number(formId))
-        const formDataFormatted = formData.map((data)=>{
+        const formDataFormatted = formData.map((data)=>{ 
           return {
             id:data.id,
             data:data.data,
@@ -122,7 +122,6 @@ export class FormDataController{
         })
       }
       const formExist = await this.formService.findById(Number(formId))
-      console.log("formExist",formExist)
       if (!formExist) {
         return res.status(404).json({message:"Formulario no encontrado"})
       }
@@ -134,9 +133,7 @@ export class FormDataController{
             message: "El Tema es requerido"
           })
         }
-        console.log("topicId",topicId)
          topic = await this.topicService.findById(Number(topicId))
-        console.log("topic",topic)
         if (!topic ) {
           return res.status(404).json({message:"Topic no encontrado"})
         }
@@ -312,7 +309,6 @@ export class FormDataController{
         return res.status(404).json({message:"Entidad gubernamental no encontrada"})
       }
       const forms = await this.formService.findAllByGuvernmentIdWithTopics(Number(id_government))
-      console.log("forms",forms[0].topic)
       const formsFormatted = forms.map((form)=>{
         return {
           id: form.id,

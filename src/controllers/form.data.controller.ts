@@ -26,29 +26,6 @@ export class FormDataController{
 
   findAll = async(req:Request,res:Response)=>{
     try {
-      const {formId} = req.query
-      if (formId) {
-        const formData = await this.formDataService.findByFormId(Number(formId))
-        const formDataFormatted = formData.map((data)=>{ 
-          return {
-            id:data.id,
-            data:data.data,
-            id_topic: data.topic?.id ?? undefined,
-            edit:data.edit,
-            active:data.active,
-            created_at:data.createdAt,
-            id_form:data.form.id,
-            form_name:data.form.name,
-            topic_name:data.topic?.name ?? undefined,
-            id_user:data.user.id,
-            username:data.user.name,
-          }
-        })
-        return res.status(200).json({
-          message:"FormData por formulario obtenidos correctamente",
-          data:formDataFormatted
-        })
-      }
       const formData = await this.formDataService.findAll()
       const formDataFormatted = formData.map((data)=>{
         return {
@@ -72,6 +49,67 @@ export class FormDataController{
     } catch (error) {
       console.error("Error al obtener los FormData:", error)
       res.status(500).json({message:"Error al obtener los FormData"})
+    }
+  }
+  
+  findAllByFormId = async(req:Request,res:Response)=>{
+    const id = req.params.id
+    const form_exist = await this.formService.findById(Number(id))
+    if(!form_exist){
+      return res.status(404).json({message:"Formulario no encontrado"})
+    }
+    const formData = await this.formDataService.findByFormId(form_exist.id)
+    const formDataFormatted = formData.map((data)=>{ 
+      return {
+        id:data.id,
+        data:data.data,
+        id_topic: data.topic?.id ?? undefined,
+        edit:data.edit,
+        active:data.active,
+        created_at:data.createdAt,
+        id_form:data.form.id,
+        form_name:data.form.name,
+        topic_name:data.topic?.name ?? undefined,
+        id_user:data.user.id,
+        username:data.user.name,
+      }
+    })
+    return res.status(200).json({
+      message:"FormData por formulario obtenidos correctamente",
+      data:formDataFormatted
+    })
+  }
+
+  findAllByGuvernment = async(req:Request,res:Response)=>{
+    try{
+      const id = req.params.id
+      const guvernment_exist = await this.guvernmentService.findById(Number(id))
+      if(!guvernment_exist){
+        return res.status(404).json({message:"Entidad gubernamental no encontrada"})
+      }
+      const form_data = await this.formDataService.findByGuvernmentId(guvernment_exist.id)
+      const form_data_formatted = form_data.map((data)=>{
+        return {
+          id:data.id,
+          data:data.data,
+          id_topic: data.topic?.id ?? undefined,
+          edit:data.edit,
+          active:data.active,
+          created_at:data.createdAt,
+          id_form:data.form.id,
+          form_name:data.form.name,
+          topic_name:data.topic?.name ?? undefined,
+          id_user:data.user.id,
+          username:data.user.name,
+        }
+      })
+      return res.status(200).json({
+        message:"FormData obtenidos correctamente",
+        data:form_data_formatted
+      })
+    }catch(error){
+      console.error("Error al obtener los FormData:", error)
+      return res.status(500).json({message:"Error al obtener los FormData"})
     }
   }
   findById = async(req:Request,res:Response)=>{

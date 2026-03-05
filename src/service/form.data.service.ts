@@ -89,6 +89,41 @@ export class FormDataService {
       }
     })
   }
+  async findByGuvernmentId(guvermnetId:number){
+    return this.formDataRepository.find({
+      where:{
+        form:{
+          guvernment:{
+            id:guvermnetId
+          }
+        }
+      },
+      select:{
+        id:true,
+        topic:{
+          id:true,
+          name:true,
+        },
+        form:{
+          id:true,
+          name:true,
+        },
+        user:{
+          id:true,
+          name:true,
+        },
+        data:true,
+        edit:true,
+        active:true,
+        createdAt:true,
+      },
+      relations:{
+        topic:true,
+        form:true,
+        user:true,
+      }
+    })
+  }
 }
 
 export type TFormDataService = typeof FormDataService.prototype

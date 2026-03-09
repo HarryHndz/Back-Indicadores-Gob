@@ -6,6 +6,7 @@ import topicRouter from "./topic.routes";
 import fieldRouter from "./field.routes";
 import formDataRouter from "./form.data.routes";
 import rolRouter from "./rol.routes";
+import uploadRouter from "./upload.routes";
 export{
   authRouter,
   userRouter,
@@ -14,5 +15,6 @@ export{
   topicRouter,
   fieldRouter,
   formDataRouter,
-  rolRouter
+  rolRouter,
+  uploadRouter
 }

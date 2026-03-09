@@ -38,6 +38,7 @@ export class UserController{
 
   findAll = async (req:Request,res:Response)=>{
     try {
+      // const userId = req?.auth.
       const users = await this.userService.findAll()
       const userFormatted = users.map((user)=>{
         return {

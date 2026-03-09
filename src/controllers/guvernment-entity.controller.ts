@@ -1,6 +1,8 @@
 import { GuvernmentEntity } from "@/entities";
 import { GuvernmentEntityService,TGuvernmentEntityService } from "@/service/guvernment-entity.service";
+import { UploadedFile } from "express-fileupload";
 import { Request, Response } from "express";
+import { publicPath } from "@/utils/public.path";
 
 const API_URL = 'http://localhost:3000'
 
@@ -157,6 +159,46 @@ export class GuvernmentEntityController{
       })
     } catch (error) {
       res.status(500).json({message:"Error al eliminar la entidad gubernamental"})
+    }
+  }
+
+  saveImage = async (req:Request,res:Response)=>{
+    try {
+      const data = req.body
+      if (!data.id_guvernment) {
+        return res.status(400).json({message:"Id de la entidad gubernamental es requerido"})
+      }
+      const guvernment_exist = await this.guvernmentEntityService.findById(Number(data.id_guvernment))
+      if (!guvernment_exist) {
+        return res.status(404).json({message:"Entidad gubernamental no encontrada"})
+      }
+
+      if (!req.files || Object.keys(req.files as any).length === 0) {
+        return res.status(400).json({ message: "No file uploaded" });
+      }
+      const file = req.files?.file as UploadedFile;
+    
+      const uploadPath = `${publicPath}/${file?.name}`;
+      file.mv(uploadPath,async(err)=>{
+        if (err) {
+          return res.status(500).json({ message: "Error uploading file" });
+        }
+        await this.guvernmentEntityService.update(
+          guvernment_exist.id,
+          {
+            ...guvernment_exist,
+            image: file.name,
+          }
+        )
+        return res.status(200).json({ 
+          message: "File uploaded successfully",
+          data:{
+            file_name: file.name,
+          }
+        });
+      })
+    } catch (error) {
+      res.status(500).json({message:"Error al guardar la imagen"})
     }
   }
  

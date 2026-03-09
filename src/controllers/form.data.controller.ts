@@ -325,20 +325,38 @@ export class FormDataController{
       res.status(500).json({message:"Error al eliminar el FormData"})
     }
   }
-  findByTopicId = async(req:Request,res:Response)=>{
+  findAllByTopicId = async(req:Request,res:Response)=>{
     try {
-      const {topicId} = req.query
+      const topicId = req.params.topicId
+      const topic_exist = await this.topicService.findById(Number(topicId))
+      if(!topic_exist){
+        return res.status(404).json({message:"Tema no encontrado"})
+      }
       const formData = await this.formDataService.findByTopicId(Number(topicId))
-      res.status(200).json({
-        message:"FormData por topic obtenidos correctamente",
-        data:formData
+      const formDataFormatted = formData.map((data)=>{
+        return {
+          id:data.id,
+          data:data.data,
+          id_topic: data.topic?.id ?? undefined,
+          edit:data.edit,
+          active:data.active,
+          created_at:data.createdAt,
+          id_form:data.form.id,
+          form_name:data.form.name,
+          topic_name:data.topic?.name ?? undefined,
+          id_user:data.user.id,
+          username:data.user.name,
+        }
       })
-    }
-    catch (error) {
+      return res.status(200).json({
+        message:"FormData por topic obtenidos correctamente",
+        data:formDataFormatted
+      })
+    } catch (error) {
+      console.error("Error al obtener el FormData por topic:", error)
       res.status(500).json({message:"Error al obtener el FormData por topic"})
     }
   }
-  
   findAllByGuvernmentIdWithTopics = async (req:Request,res:Response)=>{
     try {
       const {id_government} = req.query

@@ -86,6 +86,30 @@ export class FormDataService {
         topic:{
           id:topicId
         }
+      },
+      select:{
+        id:true,
+        topic:{
+          id:true,
+          name:true,
+        },
+        form:{
+          id:true,
+          name:true,
+        },
+        user:{
+          id:true,
+          name:true,
+        },
+        data:true,
+        edit:true,
+        active:true,
+        createdAt:true,
+      },
+      relations:{
+        topic:true,
+        form:true,
+        user:true,
       }
     })
   }

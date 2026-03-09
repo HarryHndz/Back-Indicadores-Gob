@@ -8,20 +8,19 @@ import {
   topicRouter, 
   fieldRouter,
   rolRouter,
-  formDataRouter 
+  formDataRouter ,
+  uploadRouter
 } from "@/routes";
 import { expressjwt } from 'express-jwt'
 import { SECRET_KEY } from '@/utils/jwt';
 import dotenv from 'dotenv';
-import path from 'path';
-import { fileURLToPath } from 'url';
+import fileUpload from 'express-fileupload';
+import { publicPath } from '@/utils/public.path';
 
 dotenv.config();
 
 export const app = express();
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const publicPath = path.join(__dirname, 'public');
+
 app.use(express.json());
 app.use(express.static(publicPath))
 app.use(cors({
@@ -40,9 +39,18 @@ app.use(expressjwt({
   ]
 })
 )
+app.use(fileUpload({
+  limits:{
+    fileSize: 1024 * 1024 * 5,
+  },
+  // useTempFiles:true,
+
+}));
 app.get('/', (_req: Request, res: Response) => {
   res.send('¡Hola! servidor funcionando')
 })
+
+app.use("/api/v1/upload",uploadRouter)
 app.use("/api/v1/auth",authRouter)
 app.use("/api/v1/user",userRouter)
 app.use("/api/v1/guvernment-entity",guvernmentEntityRouter)

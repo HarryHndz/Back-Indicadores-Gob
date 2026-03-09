@@ -12,8 +12,8 @@ router.delete("/:id",formDataController.delete)
 router.get("/form/topic", formDataController.findAllByGuvernmentIdWithTopics);
 router.get("/form/:id", formDataController.findAllByFormId);
 router.get("/guvernment/:id", formDataController.findAllByGuvernment);
+router.get("/topic/:topicId", formDataController.findAllByTopicId);
 router.get("/field/form/:formId", formDataController.findFormByIdWithFields);
 router.get("/field/topic/:topicId", formDataController.findFormByTopicIdWithFields);
-router.get("/topic/:topicId", formDataController.findByTopicId);
 
 export default router;

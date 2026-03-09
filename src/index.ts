@@ -15,12 +15,17 @@ import { expressjwt } from 'express-jwt'
 import { SECRET_KEY } from '@/utils/jwt';
 import dotenv from 'dotenv';
 import fileUpload from 'express-fileupload';
-import { publicPath } from '@/utils/public.path';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
 dotenv.config();
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+export const publicPath = path.join(__dirname, 'public');
+
 
 export const app = express();
-
+console.log("publicPath",publicPath)
 app.use(express.json());
 app.use(express.static(publicPath))
 app.use(cors({

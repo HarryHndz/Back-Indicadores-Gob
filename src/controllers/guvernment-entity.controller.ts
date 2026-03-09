@@ -2,7 +2,8 @@ import { GuvernmentEntity } from "@/entities";
 import { GuvernmentEntityService,TGuvernmentEntityService } from "@/service/guvernment-entity.service";
 import { UploadedFile } from "express-fileupload";
 import { Request, Response } from "express";
-import { publicPath } from "@/utils/public.path";
+import { publicPath } from "@/index";
+import {access,unlink} from "fs/promises";
 
 const API_URL = 'http://localhost:3000'
 
@@ -152,11 +153,15 @@ export class GuvernmentEntityController{
       if (!guvernmentEntity) {
         return res.status(404).json({message:"Entidad gubernamental no encontrada"})
       }
-      const guvernmentEntityDeleted = await this.guvernmentEntityService.delete(id)
-      res.status(200).json({
-        message:"Entidad gubernamental eliminada correctamente",
-        data:guvernmentEntityDeleted
-      })
+      const image_path = `${publicPath}/${guvernmentEntity.image}`
+      try {
+        await access(image_path)
+        await unlink(image_path)
+      } catch (error) {
+        console.error(error)
+      }
+      await this.guvernmentEntityService.delete(id)
+      res.status(200).json({message:"Entidad gubernamental eliminada correctamente"})
     } catch (error) {
       res.status(500).json({message:"Error al eliminar la entidad gubernamental"})
     }
@@ -164,11 +169,8 @@ export class GuvernmentEntityController{
 
   saveImage = async (req:Request,res:Response)=>{
     try {
-      const data = req.body
-      if (!data.id_guvernment) {
-        return res.status(400).json({message:"Id de la entidad gubernamental es requerido"})
-      }
-      const guvernment_exist = await this.guvernmentEntityService.findById(Number(data.id_guvernment))
+      const id = Number(req.params.id)
+      const guvernment_exist = await this.guvernmentEntityService.findById(id)
       if (!guvernment_exist) {
         return res.status(404).json({message:"Entidad gubernamental no encontrada"})
       }
@@ -182,6 +184,15 @@ export class GuvernmentEntityController{
       file.mv(uploadPath,async(err)=>{
         if (err) {
           return res.status(500).json({ message: "Error uploading file" });
+        }
+        if (guvernment_exist?.image) {
+          const image_path = `${publicPath}/${guvernment_exist.image}`
+          try {
+            await access(image_path)
+            await unlink(image_path)
+          } catch (error) {
+            console.error(error)
+          }
         }
         await this.guvernmentEntityService.update(
           guvernment_exist.id,

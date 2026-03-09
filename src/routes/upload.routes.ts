@@ -3,7 +3,7 @@ import { GuvernmentEntityController } from "@/controllers/guvernment-entity.cont
 
 const router = Router();
 const guvernmentEntityController = new GuvernmentEntityController();
-router.post("/guvernment-entity",guvernmentEntityController.saveImage);
+router.post("/guvernment-entity/:id",guvernmentEntityController.saveImage);
 
 
 export default router;

@@ -1,15 +1,15 @@
 import { AppDataSource } from "@/config/db";
 import { Form } from "@/entities/index";
 import { Repository } from "typeorm";
-
+import { TAKE } from "@/utils/pagination";
 export class FormService{
   private formRepository:Repository<Form>
   constructor(){
     this.formRepository = AppDataSource.getRepository(Form)
   }
 
-  async findAll(){
-    return this.formRepository.find({
+  async findAll(skip:number=1){
+    return await this.formRepository.find({
       relations:{
         guvernment:true,
         fields:true,
@@ -31,12 +31,14 @@ export class FormService{
         formData:{
           id:true,
         }
-      }
+      },
+      skip,
+      take:TAKE,
     })
   }
 
   async findById(id:number){
-    return this.formRepository.findOne({
+    return await this.formRepository.findOne({
       where:{
         id
       },
@@ -63,18 +65,18 @@ export class FormService{
   }
 
   async create(form:Form){
-    return this.formRepository.save(form)
+    return await this.formRepository.save(form)
   }
 
   async update(id:number,form:Form){
-    return this.formRepository.update(id,form)
+    return await this.formRepository.update(id,form)
   }
 
   async delete(id:number){
-    return this.formRepository.delete(id)
+    return await this.formRepository.delete(id)
   }
-  async findAllByGubernmentId(gubernmentId:number){
-    return this.formRepository.find({
+  async findAllByGubernmentId(gubernmentId:number,skip:number=1){
+    return await this.formRepository.find({
       where:{
         guvernment:{
           id:gubernmentId
@@ -101,12 +103,14 @@ export class FormService{
         formData:{
           id:true,
         }
-      }
+      },
+      take:TAKE,
+      skip:skip,
     })
   }
 
   async findAllByGuvernmentIdWithTopics(guvernmentId:number){
-    return this.formRepository.find({
+    return await this.formRepository.find({
       where:{
         guvernment:{
           id:guvernmentId
@@ -133,6 +137,16 @@ export class FormService{
           update_period:true,
           createdAt:true,
         }
+      }
+    })
+  }
+  async totalRegister(){
+    return await this.formRepository.count()
+  }
+  async totalRegisterByGubernmentId(gubernmentId:number){
+    return await this.formRepository.countBy({
+      guvernment:{
+        id:gubernmentId
       }
     })
   }

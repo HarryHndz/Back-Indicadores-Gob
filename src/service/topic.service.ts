@@ -7,22 +7,22 @@ export class TopicService{
     this.topicRepository = AppDataSource.getRepository(Topic)
   }
   async findAll(){
-    return this.topicRepository.find()
+    return await this.topicRepository.find()
   }
   async findById(id:number){
-    return this.topicRepository.findOneBy({id})
+    return await this.topicRepository.findOneBy({id})
   }
   async create(topic:Topic){
-    return this.topicRepository.save(topic)
+    return await this.topicRepository.save(topic)
   }
   async update(id:number,topic:Topic){
-    return this.topicRepository.update(id,topic)
+    return await this.topicRepository.update(id,topic)
   }
   async delete(id:number){
-    return this.topicRepository.delete(id)
+    return await this.topicRepository.delete(id)
   }
   async findByFormId(formId:number){
-    return this.topicRepository.find({
+    return await this.topicRepository.find({
       where: {
         form: {
           id: formId,

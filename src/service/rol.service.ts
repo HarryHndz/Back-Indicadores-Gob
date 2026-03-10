@@ -8,19 +8,19 @@ export class RolService{
     this.rolRepository = AppDataSource.getRepository(Rol)
   }
   async findAll(){
-    return this.rolRepository.find()
+    return await this.rolRepository.find()
   }
   async findById(id:number){
-    return this.rolRepository.findOneBy({id})
+    return await this.rolRepository.findOneBy({id})
   }
   async create(rol:Rol){
-    return this.rolRepository.save(rol)
+    return await this.rolRepository.save(rol)
   }
   async update(id:number,rol:Rol){
-    return this.rolRepository.update(id,rol)
-  }
+    return await this.rolRepository.update(id,rol)
+  } 
   async delete(id:number){
-    return this.rolRepository.delete(id)
+    return await this.rolRepository.delete(id)
   }
 }
 

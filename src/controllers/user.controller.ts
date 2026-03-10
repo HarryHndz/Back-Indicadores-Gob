@@ -4,6 +4,7 @@ import { Request, Response } from "express";
 import { User } from "@/entities";
 import { RolService } from "@/service/rol.service";
 import { GuvernmentEntityService } from "@/service/guvernment-entity.service";
+import { calculateSkip, calculateTotalPages } from "@/utils/pagination";
 export class UserController{
   private userService: UserService
   constructor(){
@@ -38,8 +39,9 @@ export class UserController{
 
   findAll = async (req:Request,res:Response)=>{
     try {
-      // const userId = req?.auth.
-      const users = await this.userService.findAll()
+      const {page} = req.query
+      const skip = calculateSkip(Number(page || 1))
+      const users = await this.userService.findAll(skip)
       const userFormatted = users.map((user)=>{
         return {
           id:user.id,
@@ -149,6 +151,39 @@ export class UserController{
     } catch (error) {
       console.error(error)
       res.status(500).json({ message: "Internal server error" })
+    }
+  }
+
+  totalRegister = async(req:Request,res:Response)=>{
+    try {
+      const totalUsers = await this.userService.totalRegister()
+      const totalPages = calculateTotalPages(totalUsers)
+      res.status(200).json({
+        message:"Total de usuarios encontrados correctamente",
+        data:{
+          totalPages,
+          totalItems:totalUsers,
+        }
+      })
+    } catch (error) {
+      res.status(500).json({message:"Error al obtener el total de usuarios"})
+    }
+  }
+  
+  totalRegisterByGuvernmentId = async(req:Request,res:Response)=>{
+    try {
+      const {guvernmentId} = req.params
+      const totalUsers = await this.userService.totalRegisterByGuvernmentId(Number(guvernmentId))
+      const totalPages = calculateTotalPages(totalUsers)
+      res.status(200).json({
+        message:"Total de usuarios encontrados correctamente",
+        data:{
+          totalPages,
+          totalItems:totalUsers,
+        }
+      })
+    } catch (error) {
+      res.status(500).json({message:"Error al obtener el total de usuarios"})
     }
   }
 }

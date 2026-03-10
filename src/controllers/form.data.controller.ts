@@ -7,6 +7,7 @@ import { FormService, TFormService } from "@/service/form.service";
 import { GuvernmentEntityService, TGuvernmentEntityService } from "@/service/guvernment-entity.service";
 import { FormData, Topic } from "@/entities";
 import { TUserService, UserService } from "@/service/user.service";
+import { calculateSkip } from "@/utils/pagination";
 export class FormDataController{
   private formDataService:TFormDataService
   private fieldService:TFieldService
@@ -26,7 +27,9 @@ export class FormDataController{
 
   findAll = async(req:Request,res:Response)=>{
     try {
-      const formData = await this.formDataService.findAll()
+      const {page} = req.query
+      const skip = calculateSkip(Number(page || 1))
+      const formData = await this.formDataService.findAll(skip)
       const formDataFormatted = formData.map((data)=>{
         return {
           id:data.id,
@@ -58,7 +61,9 @@ export class FormDataController{
     if(!form_exist){
       return res.status(404).json({message:"Formulario no encontrado"})
     }
-    const formData = await this.formDataService.findByFormId(form_exist.id)
+    const {page} = req.query
+    const skip = calculateSkip(Number(page || 1))
+    const formData = await this.formDataService.findByFormId(form_exist.id,skip)
     const formDataFormatted = formData.map((data)=>{ 
       return {
         id:data.id,
@@ -87,7 +92,9 @@ export class FormDataController{
       if(!guvernment_exist){
         return res.status(404).json({message:"Entidad gubernamental no encontrada"})
       }
-      const form_data = await this.formDataService.findByGuvernmentId(guvernment_exist.id)
+      const {page} = req.query
+      const skip = calculateSkip(Number(page || 1))
+      const form_data = await this.formDataService.findByGuvernmentId(guvernment_exist.id,skip)
       const form_data_formatted = form_data.map((data)=>{
         return {
           id:data.id,
@@ -332,7 +339,9 @@ export class FormDataController{
       if(!topic_exist){
         return res.status(404).json({message:"Tema no encontrado"})
       }
-      const formData = await this.formDataService.findByTopicId(Number(topicId))
+      const {page} = req.query
+      const skip = calculateSkip(Number(page || 1))
+      const formData = await this.formDataService.findByTopicId(Number(topicId),skip)
       const formDataFormatted = formData.map((data)=>{
         return {
           id:data.id,

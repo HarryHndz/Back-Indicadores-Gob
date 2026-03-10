@@ -1,6 +1,7 @@
 import { AppDataSource } from '@/config/db'
 import { GuvernmentEntity } from '@/entities/index'
 import { Repository } from 'typeorm'
+import { TAKE } from '@/utils/pagination'
 
 export class GuvernmentEntityService{
   private guvernmentEntityRepository: Repository<GuvernmentEntity>
@@ -8,8 +9,8 @@ export class GuvernmentEntityService{
     this.guvernmentEntityRepository = AppDataSource.getRepository(GuvernmentEntity)
   }
 
-  async findAll(){
-    return this.guvernmentEntityRepository.find({
+  async findAll(skip:number=1){
+    return await this.guvernmentEntityRepository.find({
       select:{
         id:true,
         name:true,
@@ -23,12 +24,14 @@ export class GuvernmentEntityService{
       },
       relations:{
         parentGubernment:true,
-      }
+      },
+      skip:skip,
+      take:TAKE
     })
   }
 
   async findById(id:number){
-    return this.guvernmentEntityRepository.findOne({
+    return await this.guvernmentEntityRepository.findOne({
       where:{id},
       select:{
         id:true,
@@ -48,15 +51,18 @@ export class GuvernmentEntityService{
   }
 
   async create(guvernmentEntity:GuvernmentEntity){
-    return this.guvernmentEntityRepository.save(guvernmentEntity)
+    return await this.guvernmentEntityRepository.save(guvernmentEntity)
   }
 
   async update(id:number,guvernmentEntity:GuvernmentEntity){
-    return this.guvernmentEntityRepository.update(id,guvernmentEntity)
+    return await this.guvernmentEntityRepository.update(id,guvernmentEntity)
   }
 
   async delete(id:number){
-    return this.guvernmentEntityRepository.delete(id)
+    return await this.guvernmentEntityRepository.delete(id)
+  }
+  async totalRegister(){
+    return await this.guvernmentEntityRepository.count()
   }
 
 }

@@ -1,6 +1,7 @@
 import { Form } from "@/entities";
 import { FormService, TFormService } from "@/service/form.service";
 import { GuvernmentEntityService, TGuvernmentEntityService } from "@/service/guvernment-entity.service";
+import { calculateSkip, calculateTotalPages } from "@/utils/pagination";
 import { Request, Response } from "express";
 
 export class FormController{
@@ -13,13 +14,14 @@ export class FormController{
 
   findAll = async (req:Request,res:Response)=>{
     try {
-      const {gubernmentId} = req.query
+      const {gubernmentId,page} = req.query
+      const skip = calculateSkip(Number(page || 1))
       if (gubernmentId) {
         const guvernamentExits = await this.guvernmentEntityService.findById(Number(gubernmentId))
         if(!guvernamentExits){
           return res.status(404).json({message:"Entidad gubernamental no encontrada"})
         }
-        const formsByGubernment = await this.formService.findAllByGubernmentId(guvernamentExits.id)
+        const formsByGubernment = await this.formService.findAllByGubernmentId(guvernamentExits.id,skip)
         const formsFormatted = formsByGubernment.map((form)=>{
           return {
             id:form.id,
@@ -42,8 +44,7 @@ export class FormController{
           }
         })
       }
-      
-      const forms = await this.formService.findAll()
+      const forms = await this.formService.findAll(skip)
       const formsFormatted = forms.map((form)=>{
         return {
           id:form.id,
@@ -144,6 +145,39 @@ export class FormController{
       })
     } catch (error) {
       res.status(500).json({message:"Error al eliminar el formulario"})
+    }
+  }
+
+  totalRegister = async(req:Request,res:Response)=>{
+    try {
+      const totalForms = await this.formService.totalRegister()
+      const totalPages = calculateTotalPages(totalForms)
+      res.status(200).json({
+        message:"Total de formularios encontrados correctamente",
+        data:{
+          totalPages,
+          totalItems:totalForms,
+        }
+      })
+    } catch (error) {
+      res.status(500).json({message:"Error al obtener el total de formularios"})
+    }
+  }
+
+  totalRegisterByGubernmentId = async(req:Request,res:Response)=>{
+    try {
+      const {gubernmentId} = req.params
+      const totalForms = await this.formService.totalRegisterByGubernmentId(Number(gubernmentId))
+      const totalPages = calculateTotalPages(totalForms)
+      res.status(200).json({
+        message:"Total de formularios encontrados correctamente",
+        data:{
+          totalPages,
+          totalItems:totalForms,
+        }
+      })
+    } catch (error) {
+      res.status(500).json({message:"Error al obtener el total de formularios"})
     }
   }
 }

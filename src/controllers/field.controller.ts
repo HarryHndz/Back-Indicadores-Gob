@@ -5,6 +5,7 @@ import { FormService } from "@/service/form.service";
 import { TopicService } from "@/service/topic.service";
 import { DATA_TYPE_VALIDATION_RULES } from "@/utils/validation.rules";
 import { municipios } from "@/utils/municipios";
+import { calculateSkip, calculateTotalPages } from "@/utils/pagination";
 
 
 export class FieldController{
@@ -94,7 +95,9 @@ export class FieldController{
   }
   findAll = async(req:Request,res:Response)=>{
     try {
-      const fields = await this.fieldService.findAll()
+      const {page} = req.query
+      const skip = calculateSkip(Number(page || 1))
+      const fields = await this.fieldService.findAll(skip)
       res.status(200).json({
         message:"Campos obtenidos correctamente",
         data:fields
@@ -111,7 +114,9 @@ export class FieldController{
       if(!formExits){
         return res.status(404).json({message:"Formulario no encontrado"})
       }
-      const fields = await this.fieldService.findAllByFormId(Number(formId))
+      const page = Number(req.query.page || 1)
+      const skip = calculateSkip(page)
+      const fields = await this.fieldService.findAllByFormId(Number(formId),skip)
       const fieldsFormatted = fields.map((field)=>{
         return {
           id:field.id,
@@ -149,7 +154,9 @@ export class FieldController{
       if(!topicExits){
         return res.status(404).json({message:"Tema no encontrado"})
       }
-      const fields = await this.fieldService.findAllByTopicId(Number(topicId))
+      const page = Number(req.query.page || 1)
+      const skip = calculateSkip(page)
+      const fields = await this.fieldService.findAllByTopicId(Number(topicId),skip)
       res.status(200).json({
         message:"Campos obtenidos correctamente",
         data:fields
@@ -178,6 +185,54 @@ export class FieldController{
       })
     } catch (error) {
       res.status(500).json({message:"Error al obtener los municipios"})
+    }
+  }
+  totalRegister = async(req:Request,res:Response)=>{
+    try {
+      const totalFields = await this.fieldService.totalRegister()
+      const totalPages = calculateTotalPages(totalFields)
+      res.status(200).json({
+        message:"Total de campos encontrados correctamente",
+        data:{
+          totalPages,
+          totalItems:totalFields,
+        }
+      })
+    }catch(error){
+      res.status(500).json({message:"Error al obtener el total de campos"})
+    }
+  }
+  totalRegisterByFormId = async(req:Request,res:Response)=>{
+    try {
+      const {formId} = req.params
+      const totalFields = await this.fieldService.totalRegisterByFormId(Number(formId))
+      const totalPages = calculateTotalPages(totalFields)
+      res.status(200).json({
+        message:"Total de campos encontrados correctamente",
+        data:{
+          totalPages,
+          totalItems:totalFields,
+        }
+      })
+    }catch(error){
+      res.status(500).json({message:"Error al obtener el total de campos"})
+    }
+  }
+
+  totalRegisterByTopicId = async(req:Request,res:Response)=>{
+    try {
+      const {topicId} = req.params
+      const totalFields = await this.fieldService.totalRegisterByTopicId(Number(topicId))
+      const totalPages = calculateTotalPages(totalFields)
+      res.status(200).json({
+        message:"Total de campos encontrados correctamente",
+        data:{
+          totalPages,
+          totalItems:totalFields,
+        }
+      })
+    }catch(error){
+      res.status(500).json({message:"Error al obtener el total de campos"})
     }
   }
 }

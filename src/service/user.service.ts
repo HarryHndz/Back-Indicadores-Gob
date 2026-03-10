@@ -1,5 +1,6 @@
 import { AppDataSource } from "@/config/db";
 import { User } from "@/entities/User";
+import { TAKE } from "@/utils/pagination";
 import { Repository } from "typeorm";
 
 export class UserService{
@@ -32,7 +33,7 @@ export class UserService{
       }
     })
   }
-  async findAll(){
+  async findAll(skip:number=1){
     return await this.userRepository.find({
       select:{
         id:true,
@@ -52,7 +53,9 @@ export class UserService{
       relations:{
         rol:true,
         guvernment:true,
-      }
+      },
+      skip,
+      take:TAKE,
     })
   }
   async create(user:User){
@@ -72,6 +75,16 @@ export class UserService{
         guvernment:true,
       }
     });
+  }
+  async totalRegister(){
+    return await this.userRepository.count()
+  }
+  async totalRegisterByGuvernmentId(guvernmentId:number){
+    return await this.userRepository.countBy({
+      guvernment:{
+        id:guvernmentId
+      }
+    })
   }
 }
 

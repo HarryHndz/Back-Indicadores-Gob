@@ -4,6 +4,7 @@ import { UploadedFile } from "express-fileupload";
 import { Request, Response } from "express";
 import { publicPath } from "@/index";
 import {access,unlink} from "fs/promises";
+import { calculateSkip, calculateTotalPages } from "@/utils/pagination";
 
 const API_URL = 'http://localhost:3000'
 
@@ -15,7 +16,9 @@ export class GuvernmentEntityController{
 
   findAll = async (req:Request,res:Response)=>{
     try {
-      const guvernmentEntities = await this.guvernmentEntityService.findAll()
+      const page = Number(req.query.page) || 1
+      const skip = calculateSkip(page)
+      const guvernmentEntities = await this.guvernmentEntityService.findAll(skip)
       const guvernmentFormatted = guvernmentEntities.map((guvernment)=>{
         return {
           id:guvernment.id,
@@ -210,6 +213,22 @@ export class GuvernmentEntityController{
       })
     } catch (error) {
       res.status(500).json({message:"Error al guardar la imagen"})
+    }
+  }
+
+  totalRegister = async(req:Request,res:Response)=>{
+    try {
+      const totalGuvernmentEntities = await this.guvernmentEntityService.totalRegister()
+      const totalPages = calculateTotalPages(totalGuvernmentEntities)
+      res.status(200).json({
+        message:"Total de páginas encontradas correctamente",
+        data:{
+          totalPages,
+          totalItems:totalGuvernmentEntities,
+        }
+      })
+    } catch (error) {
+      res.status(500).json({message:"Error al obtener el total de páginas"})
     }
   }
  

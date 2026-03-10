@@ -1,14 +1,15 @@
 import { Repository } from "typeorm"
 import { FormData } from "@/entities/index"
 import { AppDataSource } from "@/config/db"
+import { TAKE } from "@/utils/pagination"
 
 export class FormDataService {
   private formDataRepository: Repository<FormData>
   constructor(){
     this.formDataRepository = AppDataSource.getRepository(FormData)
   }
-  async findAll(){
-    return this.formDataRepository.find({
+  async findAll(skip:number=1){
+    return await this.formDataRepository.find({
       select:{
         id:true,
         topic:{
@@ -32,23 +33,25 @@ export class FormDataService {
         topic:true,
         form:true,
         user:true,
-      }
+      },
+      take:TAKE,
+      skip:skip,
     })
   }
   async findById(id:number){
-    return this.formDataRepository.findOneBy({id})
+    return await this.formDataRepository.findOneBy({id})
   }
   async create(data:FormData){
-    return this.formDataRepository.save(data)
+    return await this.formDataRepository.save(data)
   }
   async update(id:number,data:FormData){
-    return this.formDataRepository.update(id,data)
+    return await this.formDataRepository.update(id,data)
   }
   async delete(id:number){
-    return this.formDataRepository.delete(id)
+    return await this.formDataRepository.delete(id)
   }
-  async findByFormId(formId:number){
-    return this.formDataRepository.find({
+  async findByFormId(formId:number,skip:number=1){
+    return await this.formDataRepository.find({
       where:{
         form:{
           id:formId
@@ -77,11 +80,13 @@ export class FormDataService {
         topic:true,
         form:true,
         user:true,
-      }
+      },
+      take:TAKE,
+      skip:skip,
     })
   }
-  async findByTopicId(topicId:number){
-    return this.formDataRepository.find({
+  async findByTopicId(topicId:number,skip:number=1){
+    return await this.formDataRepository.find({
       where:{
         topic:{
           id:topicId
@@ -110,11 +115,13 @@ export class FormDataService {
         topic:true,
         form:true,
         user:true,
-      }
+      },
+      take:TAKE,
+      skip:skip,
     })
   }
-  async findByGuvernmentId(guvermnetId:number){
-    return this.formDataRepository.find({
+  async findByGuvernmentId(guvermnetId:number,skip:number=1){
+    return await this.formDataRepository.find({
       where:{
         form:{
           guvernment:{
@@ -145,6 +152,34 @@ export class FormDataService {
         topic:true,
         form:true,
         user:true,
+      },
+      take:TAKE,
+      skip:skip,
+    })
+  }
+  async totalRegister(){
+    return await this.formDataRepository.count()
+  }
+  async totalRegisterByFormId(formId:number){
+    return await this.formDataRepository.countBy({
+      form:{
+        id:formId
+      }
+    })
+  }
+  async totalRegisterByTopicId(topicId:number){
+    return await this.formDataRepository.countBy({
+      topic:{
+        id:topicId
+      }
+    })
+  }
+  async totalRegisterByGuvernmentId(guvernmentId:number){
+    return await this.formDataRepository.countBy({
+      form:{
+        guvernment:{
+          id:guvernmentId
+        }
       }
     })
   }

@@ -1,6 +1,7 @@
 import {Field} from '@/entities/index'
 import {Repository} from 'typeorm'
 import { AppDataSource } from '@/config/db'
+import { TAKE } from '@/utils/pagination'
 
 export class FieldService{
   private fieldRepository:Repository<Field>
@@ -8,8 +9,8 @@ export class FieldService{
     this.fieldRepository = AppDataSource.getRepository(Field)
   }
 
-  async findAllByFormId(formId:number){
-    return this.fieldRepository.find({
+  async findAllByFormId(formId:number,skip:number=1){
+    return await this.fieldRepository.find({
       where:{
         form:{
           id:formId
@@ -38,26 +39,31 @@ export class FieldService{
       },
       order:{
         order_index: 'ASC'
-      }
+      },
+      skip:skip,
+      take:TAKE,
     })
   }
   async findById(id:number){
-    return this.fieldRepository.findOneBy({id})
+    return await this.fieldRepository.findOneBy({id})
   }
-  async findAll(){
-    return this.fieldRepository.find()
+  async findAll(skip:number=1){
+    return await this.fieldRepository.find({
+      skip:skip,
+      take:TAKE,
+    })
   }
   async create(field:Field){
-    return this.fieldRepository.save(field)
+    return await this.fieldRepository.save(field)
   }
   async update(id:number,field:Field){
-    return this.fieldRepository.update(id,field)
+    return await this.fieldRepository.update(id,field)
   }
   async delete(id:number){
-    return this.fieldRepository.delete(id)
+    return await this.fieldRepository.delete(id)
   }
   async findAllByTopicId(topicId:number){
-    return this.fieldRepository.find({
+    return await this.fieldRepository.find({
       where:{
         topic:{
           id:topicId
@@ -86,6 +92,23 @@ export class FieldService{
       relations:{
         form:true,
         topic:true,
+      },
+    })
+  }
+  async totalRegister(){
+    return await this.fieldRepository.count()
+  }
+  async totalRegisterByFormId(formId:number){
+    return await this.fieldRepository.countBy({
+      form:{
+        id:formId
+      }
+    })
+  }
+  async totalRegisterByTopicId(topicId:number){
+    return await this.fieldRepository.countBy({
+      topic:{
+        id:topicId
       }
     })
   }

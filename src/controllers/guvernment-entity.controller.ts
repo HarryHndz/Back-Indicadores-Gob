@@ -4,7 +4,7 @@ import { UploadedFile } from "express-fileupload";
 import { Request, Response } from "express";
 import { publicPath } from "@/index";
 import {access,unlink} from "fs/promises";
-import { calculateSkip, calculateTotalPages } from "@/utils/pagination";
+import { calculateSkip, calculateTotalPages, TAKE } from "@/utils/pagination";
 
 const API_URL = 'http://localhost:3000'
 
@@ -220,11 +220,12 @@ export class GuvernmentEntityController{
     try {
       const totalGuvernmentEntities = await this.guvernmentEntityService.totalRegister()
       const totalPages = calculateTotalPages(totalGuvernmentEntities)
-      res.status(200).json({
+      return res.status(200).json({
         message:"Total de páginas encontradas correctamente",
         data:{
-          totalPages,
-          totalItems:totalGuvernmentEntities,
+          total_pages:totalPages,
+          total_items:totalGuvernmentEntities,
+          items_per_page: totalGuvernmentEntities > TAKE ? TAKE : totalGuvernmentEntities
         }
       })
     } catch (error) {

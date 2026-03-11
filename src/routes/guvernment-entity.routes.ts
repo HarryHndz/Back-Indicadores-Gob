@@ -8,6 +8,7 @@ const router = Router();
 const guvernmentEntityController = new GuvernmentEntityController();
 
 router.get("/", guvernmentEntityController.findAll);
+router.get("/total-guvernment-entities", guvernmentEntityController.totalRegister);
 router.get("/:id", guvernmentEntityController.findById);
 router.post("/", validateGuvernmentEntityData, guvernmentEntityController.create);
 router.put(

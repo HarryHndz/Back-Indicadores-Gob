@@ -1,7 +1,7 @@
 import { Form } from "@/entities";
 import { FormService, TFormService } from "@/service/form.service";
 import { GuvernmentEntityService, TGuvernmentEntityService } from "@/service/guvernment-entity.service";
-import { calculateSkip, calculateTotalPages } from "@/utils/pagination";
+import { calculateSkip, calculateTotalPages, TAKE } from "@/utils/pagination";
 import { Request, Response } from "express";
 
 export class FormController{
@@ -150,30 +150,27 @@ export class FormController{
 
   totalRegister = async(req:Request,res:Response)=>{
     try {
+      const {gubernmentId} = req.query
+      if (gubernmentId) {
+        const totalForms = await this.formService.totalRegisterByGubernmentId(Number(gubernmentId))
+        const totalPages = calculateTotalPages(totalForms)
+        return res.status(200).json({
+          message:"Total de formularios encontrados correctamente",
+          data:{
+            total_pages:totalPages,
+            total_items:totalForms,
+            items_per_page:totalForms > TAKE ? TAKE : totalForms,
+          }
+        })
+      }
       const totalForms = await this.formService.totalRegister()
       const totalPages = calculateTotalPages(totalForms)
-      res.status(200).json({
+      return res.status(200).json({
         message:"Total de formularios encontrados correctamente",
         data:{
-          totalPages,
-          totalItems:totalForms,
-        }
-      })
-    } catch (error) {
-      res.status(500).json({message:"Error al obtener el total de formularios"})
-    }
-  }
-
-  totalRegisterByGubernmentId = async(req:Request,res:Response)=>{
-    try {
-      const {gubernmentId} = req.params
-      const totalForms = await this.formService.totalRegisterByGubernmentId(Number(gubernmentId))
-      const totalPages = calculateTotalPages(totalForms)
-      res.status(200).json({
-        message:"Total de formularios encontrados correctamente",
-        data:{
-          totalPages,
-          totalItems:totalForms,
+          total_pages:totalPages,
+          total_items:totalForms,
+          items_per_page:totalForms > TAKE ? TAKE : totalForms,
         }
       })
     } catch (error) {

@@ -4,7 +4,7 @@ import { Request, Response } from "express";
 import { User } from "@/entities";
 import { RolService } from "@/service/rol.service";
 import { GuvernmentEntityService } from "@/service/guvernment-entity.service";
-import { calculateSkip, calculateTotalPages } from "@/utils/pagination";
+import { calculateSkip, calculateTotalPages, TAKE } from "@/utils/pagination";
 export class UserController{
   private userService: UserService
   constructor(){
@@ -156,13 +156,28 @@ export class UserController{
 
   totalRegister = async(req:Request,res:Response)=>{
     try {
+      const {guvernmentId} = req.query
+      console.log("guvernmentId",guvernmentId)
+      if (guvernmentId) {
+        const totalUsers = await this.userService.totalRegisterByGuvernmentId(Number(guvernmentId))
+        const totalPages = calculateTotalPages(totalUsers)
+        return res.status(200).json({
+          message:"Total de usuarios encontrados correctamente",
+          data:{
+            total_pages:totalPages,
+            total_items:totalUsers,
+            items_per_page:TAKE,
+          }
+        })
+      }
       const totalUsers = await this.userService.totalRegister()
       const totalPages = calculateTotalPages(totalUsers)
-      res.status(200).json({
+      return res.status(200).json({
         message:"Total de usuarios encontrados correctamente",
         data:{
-          totalPages,
-          totalItems:totalUsers,
+          total_pages:totalPages,
+          total_items:totalUsers,
+          items_per_page: totalUsers > TAKE ? TAKE : totalUsers,
         }
       })
     } catch (error) {
@@ -170,20 +185,4 @@ export class UserController{
     }
   }
   
-  totalRegisterByGuvernmentId = async(req:Request,res:Response)=>{
-    try {
-      const {guvernmentId} = req.params
-      const totalUsers = await this.userService.totalRegisterByGuvernmentId(Number(guvernmentId))
-      const totalPages = calculateTotalPages(totalUsers)
-      res.status(200).json({
-        message:"Total de usuarios encontrados correctamente",
-        data:{
-          totalPages,
-          totalItems:totalUsers,
-        }
-      })
-    } catch (error) {
-      res.status(500).json({message:"Error al obtener el total de usuarios"})
-    }
-  }
 }

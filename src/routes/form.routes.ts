@@ -8,8 +8,8 @@ const router = Router();
 const formController = new FormController();
 
 router.get("/", formController.findAll);
+router.get("/total-forms", formController.totalRegister);
 router.get("/:id", formController.findById);
-router.get
 router.post("/", validateFormData, formController.create);
 router.put(
   "/:id",

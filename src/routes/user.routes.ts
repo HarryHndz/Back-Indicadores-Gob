@@ -9,6 +9,7 @@ const router = Router();
 const userContoller = new UserController();
 
 router.get("/", userContoller.findAll);
+router.get("/total-users", userContoller.totalRegister);
 router.get("/:id", userContoller.findById);
 router.post("/register", validateUserData, userContoller.create);
 router.put(

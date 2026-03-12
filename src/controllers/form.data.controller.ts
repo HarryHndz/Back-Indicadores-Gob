@@ -7,7 +7,7 @@ import { FormService, TFormService } from "@/service/form.service";
 import { GuvernmentEntityService, TGuvernmentEntityService } from "@/service/guvernment-entity.service";
 import { FormData, Topic } from "@/entities";
 import { TUserService, UserService } from "@/service/user.service";
-import { calculateSkip } from "@/utils/pagination";
+import { calculateSkip, calculateTotalPages, TAKE } from "@/utils/pagination";
 export class FormDataController{
   private formDataService:TFormDataService
   private fieldService:TFieldService
@@ -467,6 +467,31 @@ export class FormDataController{
     } catch (error) {
       console.error("Error al obtener el formulario con campos por topic:", error)
       res.status(500).json({message:"Error al obtener el formulario con campos por topic"})
+    }
+  }
+
+  totalRegister = async(req:Request,res:Response)=>{
+    try {
+      const {formId,topicId} = req.query
+      let totalFormData:number
+      if(formId){
+        totalFormData = await this.formDataService.totalRegisterByFormId(Number(formId))
+      }else if(topicId){
+        totalFormData = await this.formDataService.totalRegisterByTopicId(Number(topicId))
+      }else{
+        totalFormData = await this.formDataService.totalRegister()
+      }
+      const totalPages = calculateTotalPages(totalFormData)
+      return res.status(200).json({
+        message:"Total de FormData encontrados correctamente",
+        data:{
+          total_pages:totalPages,
+          total_items:totalFormData,
+          items_per_page: totalFormData > TAKE ? TAKE : totalFormData,
+        }
+      })
+    } catch (error) {
+      res.status(500).json({message:"Error al obtener el total de FormData"})
     }
   }
 }

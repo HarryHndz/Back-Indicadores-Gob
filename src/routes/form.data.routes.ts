@@ -5,6 +5,7 @@ const router = Router();
 const formDataController = new FormDataController();
 
 router.get("/", formDataController.findAll);
+router.get("/total", formDataController.totalRegister);
 router.get("/:id", formDataController.findById);
 router.post("/",formDataController.create)
 router.put("/:id",formDataController.update)

@@ -29,7 +29,7 @@ export class FieldController{
   create = async(req:Request,res:Response)=>{
     try {
       const fieldData = new Field()
-      fieldData.key = req.body.name
+      fieldData.key = req.body.name.toLowerCase()
       fieldData.label = req.body.label
       fieldData.placeholder = req.body.placeholder
       fieldData.type = req.body.type

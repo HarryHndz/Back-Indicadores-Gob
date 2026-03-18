@@ -65,12 +65,11 @@ app.use("/api/v1/topic",topicRouter)
 app.use("/api/v1/field",fieldRouter)
 app.use("/api/v1/rol",rolRouter)
 
-app.use((err:any, req:Request, res:Response, next:Function) => {
+app.use((err:any, _req:Request, res:Response, _next:Function) => {
   if(err.name === 'UnauthorizedError'){
-    res.status(401).json({ message: 'Token invalido o no proporcionado' });
-  } else {
-    res.status(500).json({ message: 'Error interno del servidor' });
-  }
+    return res.status(401).json({ message: 'Token invalido o no proporcionado' });
+  } 
+  return res.status(500).json({ message: 'Error interno del servidor' });
 });
 
 export default app;

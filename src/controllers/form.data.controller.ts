@@ -366,14 +366,16 @@ export class FormDataController{
       res.status(500).json({message:"Error al obtener el FormData por topic"})
     }
   }
+  
   findAllByGuvernmentIdWithTopics = async (req:Request,res:Response)=>{
     try {
-      const {id_government} = req.query
-      const guvernmentExits = await this.guvernmentService.findById(Number(id_government))
+      const {id_guvernment,page} = req.query
+      const guvernmentExits = await this.guvernmentService.findById(Number(id_guvernment))
       if(!guvernmentExits){
         return res.status(404).json({message:"Entidad gubernamental no encontrada"})
       }
-      const forms = await this.formService.findAllByGuvernmentIdWithTopics(Number(id_government))
+      const skip = calculateSkip(Number(page || 1))
+      const forms = await this.formService.findAllByGuvernmentIdWithTopics(Number(id_guvernment),skip)
       const formsFormatted = forms.map((form)=>{
         return {
           id: form.id,

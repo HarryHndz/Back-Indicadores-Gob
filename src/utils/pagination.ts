@@ -1,4 +1,4 @@
-export const TAKE = 3
+export const TAKE = 4
 export const calculateSkip = (page:number = 1) => {
   return (page - 1) * TAKE
 }

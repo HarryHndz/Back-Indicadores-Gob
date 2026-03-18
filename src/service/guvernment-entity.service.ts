@@ -1,6 +1,6 @@
 import { AppDataSource } from '@/config/db'
 import { GuvernmentEntity } from '@/entities/index'
-import { Repository } from 'typeorm'
+import { FindOptionsWhere, Like, Repository } from 'typeorm'
 import { TAKE } from '@/utils/pagination'
 
 export class GuvernmentEntityService{
@@ -9,7 +9,11 @@ export class GuvernmentEntityService{
     this.guvernmentEntityRepository = AppDataSource.getRepository(GuvernmentEntity)
   }
 
-  async findAll(skip:number=1){
+  async findAll(skip:number=1,search:string=''){
+    const where:FindOptionsWhere<GuvernmentEntity> = {}
+    if(search){
+      where.name = Like(`%${search.toLowerCase()}%`)
+    }
     return await this.guvernmentEntityRepository.find({
       select:{
         id:true,
@@ -26,7 +30,8 @@ export class GuvernmentEntityService{
         parentGubernment:true,
       },
       skip:skip,
-      take:TAKE
+      take:TAKE,
+      where,
     })
   }
 

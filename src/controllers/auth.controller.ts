@@ -15,17 +15,17 @@ export class AuthController {
       console.log(email, password);
       const user = await this.userService.findByEmail(email);
       if (!user) {
-        return res.status(401).json({ message: "Usuario no encontrado" });
+        return res.status(404).json({ message: "Usuario no encontrado" });
       }
 
       if (!user.active) {
-        return res.status(401).json({ message: "Usuario inactivo" });
+        return res.status(404).json({ message: "Usuario inactivo" });
       }
 
       const isPasswordValid = await comparePassword(password, user.password);
 
       if (!isPasswordValid) {
-        return res.status(401).json({ message: "Contraseña incorrecta" });
+        return res.status(400).json({ message: "Contraseña incorrecta" });
       }
 
       const token = generateToken({ 

@@ -17,8 +17,9 @@ export class GuvernmentEntityController{
   findAll = async (req:Request,res:Response)=>{
     try {
       const page = Number(req.query.page) || 1
+      const search = req.query.search as string || ''
       const skip = calculateSkip(page)
-      const guvernmentEntities = await this.guvernmentEntityService.findAll(skip)
+      const guvernmentEntities = await this.guvernmentEntityService.findAll(skip,search)
       const guvernmentFormatted = guvernmentEntities.map((guvernment)=>{
         return {
           id:guvernment.id,
@@ -78,7 +79,7 @@ export class GuvernmentEntityController{
           }
         )
       }
-      guvernment_entity.name = guvernment_data.name
+      guvernment_entity.name = guvernment_data.name.toLowerCase()
       guvernment_entity.description = guvernment_data.description
       guvernment_entity.active = true
       const guvernment_entity_created = await this.guvernmentEntityService.create(guvernment_entity)

@@ -47,7 +47,7 @@ export class TopicController{
     try {
       const topic = req.body
       const topic_data = new Topic()
-      topic_data.name = topic.name
+      topic_data.name = topic.name.toLowerCase()
       topic_data.active = true
       topic_data.yearFiscal = topic.year_fiscal
       topic_data.update_period = topic.update_period

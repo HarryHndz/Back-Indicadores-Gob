@@ -2,6 +2,7 @@ import { AppDataSource } from "@/config/db";
 import { Form } from "@/entities/index";
 import { Repository } from "typeorm";
 import { TAKE } from "@/utils/pagination";
+
 export class FormService{
   private formRepository:Repository<Form>
   constructor(){
@@ -109,7 +110,7 @@ export class FormService{
     })
   }
 
-  async findAllByGuvernmentIdWithTopics(guvernmentId:number){
+  async findAllByGuvernmentIdWithTopics(guvernmentId:number,skip:number=1){
     return await this.formRepository.find({
       where:{
         guvernment:{
@@ -137,7 +138,9 @@ export class FormService{
           update_period:true,
           createdAt:true,
         }
-      }
+      },
+      skip,
+      take:TAKE
     })
   }
   async totalRegister(){

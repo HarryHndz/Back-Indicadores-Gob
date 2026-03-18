@@ -90,7 +90,7 @@ export class FormController{
     try {
       const form_data = new Form()
       const form = req.body
-      form_data.name = form.name
+      form_data.name = form.name.toLowerCase()
       form_data.description = form.description
       form_data.active = true
       form_data.yearFiscal = form?.year_fiscal ?? undefined

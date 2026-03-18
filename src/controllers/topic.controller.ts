@@ -11,9 +11,13 @@ export class TopicController{
   findAll = async(req:Request,res:Response)=>{
     try {
       const topics = await this.topicService.findAll()
+      const topicsFormatted = topics.map((t)=>({
+        ...t,
+        name:t.name.toUpperCase()
+      }))
       return res.status(200).json({
         message:"Temas encontrados correctamente",
-        data:topics
+        data:topicsFormatted
       })
     } catch (error) {
       return res.status(500).json({
@@ -32,9 +36,13 @@ export class TopicController{
           message:"Tema no encontrado"
         })
       }
+      const topicFormatted: Topic = {
+        ...topic,
+        name:topic.name.toUpperCase()
+      }
       return res.status(200).json({
         message:"Tema encontrado correctamente",
-        data:topic
+        data:topicFormatted
       })
     } catch (error) {
       return res.status(500).json({
@@ -75,7 +83,7 @@ export class TopicController{
         })
       }
       const topic_data = new Topic()
-      topic_data.name = topic.name
+      topic_data.name = topic.name.toLowerCase()
       topic_data.active = true
       topic_data.yearFiscal = topic.year_fiscal
       topic_data.update_period = topic.update_period
@@ -115,22 +123,17 @@ export class TopicController{
   }
   findAllByFormId = async(req:Request,res:Response)=>{
     try {
-      console.log(req.params)
-      console.log("entro aqui")
       const {formId} = req.params
       const formService = new FormService()
       const formExits = await formService.findById(Number(formId))
       if(!formExits){
-        console.log("no encontro el formulario")
         return res.status(404).json({message:"Formulario no encontrado"})
       }
-      console.log("encontro el formulario")
       const topics = await this.topicService.findByFormId(Number(formId))
-      console.log("encontro los temas")
       const topicsFormatted = topics.map((topic)=>{
         return {
           id:topic.id,
-          name:topic.name,
+          name:topic.name.toUpperCase(),
           id_form:topic.form.id,
           form_name:topic.form.name,
           active:topic.active,

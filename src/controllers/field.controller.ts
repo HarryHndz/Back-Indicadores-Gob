@@ -6,6 +6,7 @@ import { TopicService } from "@/service/topic.service";
 import { DATA_TYPE_VALIDATION_RULES } from "@/utils/validation.rules";
 import { municipios } from "@/utils/municipios";
 import { calculateSkip, calculateTotalPages, TAKE } from "@/utils/pagination";
+import { capitalizeLetter } from "@/utils/capitalizeLetter";
 
 
 export class FieldController{
@@ -18,9 +19,20 @@ export class FieldController{
     try {
       const {id} = req.params
       const field = await this.fieldService.findById(Number(id))
+      if (!field) {
+        return res.status(404).json({
+          message:"Campo no encontrado"
+        })
+      }
+
+      const fieldFormatted: Field = {
+        ...field,
+        key:capitalizeLetter(field.key),
+        label:capitalizeLetter(field.label)
+      }
       res.status(200).json({
         message:"Campo obtenido correctamente",
-        data:field
+        data:fieldFormatted
       })
     } catch (error) {
       res.status(500).json({message:"Error al obtener el campo"})
@@ -63,8 +75,8 @@ export class FieldController{
     try {
       const {id} = req.params
       const fieldData = new Field()
-      fieldData.key = req.body.key
-      fieldData.label = req.body.label
+      fieldData.key = req.body.key.toLowerCase()
+      fieldData.label = req.body.label.toLowerCase()
       fieldData.type = req.body.type
       fieldData.form = req.body.formId
       fieldData.validations = req.body.validations
@@ -98,9 +110,15 @@ export class FieldController{
       const {page} = req.query
       const skip = calculateSkip(Number(page || 1))
       const fields = await this.fieldService.findAll(skip)
+      const fieldsFormatted = fields.map((field)=>({
+        ...field,
+        key: capitalizeLetter(field.key),
+        label: capitalizeLetter(field.label)
+        
+      }))
       res.status(200).json({
         message:"Campos obtenidos correctamente",
-        data:fields
+        data:fieldsFormatted 
       })
     } catch (error) {
       res.status(500).json({message:"Error al obtener los campos"})
@@ -120,8 +138,8 @@ export class FieldController{
       const fieldsFormatted = fields.map((field)=>{
         return {
           id:field.id,
-          name:field.key,
-          label:field.label,
+          name:capitalizeLetter(field.key),
+          label:capitalizeLetter(field.label),
           type:field.type,
           placeholder:field.placeholder,
           options:field.options ?? undefined,
@@ -157,9 +175,14 @@ export class FieldController{
       // const page = Number(req.query.page || 1)
       // const skip = calculateSkip(page)
       const fields = await this.fieldService.findAllByTopicId(Number(topicId))
+      const fieldsFormatted = fields.map((field)=>({
+        ...field,
+        key:capitalizeLetter(field.key),
+        label: capitalizeLetter(field.label)
+      }))
       res.status(200).json({
         message:"Campos obtenidos correctamente",
-        data:fields
+        data:fieldsFormatted
       })
     } catch (error) {
       res.status(500).json({message:"Error al obtener los campos"})
@@ -167,7 +190,6 @@ export class FieldController{
   }
   validateField = async(req:Request,res:Response)=>{
     try {
-      console.log("entro aqui")
       return res.status(200).json({
         message:"Validaciones obtenidas correctamente",
         data:DATA_TYPE_VALIDATION_RULES
@@ -177,6 +199,7 @@ export class FieldController{
       
     }
   }
+  
   findAllMunicipios = async(req:Request,res:Response)=>{
     try {
       return res.status(200).json({

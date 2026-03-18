@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import {GuvernmentEntity} from "@/entities/GuvernmentEntity"
+import {GuvernmentEntity} from "@/entities"
 import { GuvernmentEntityService } from "@/service/guvernment-entity.service"
 import { AppDataSource } from "@/config/db"
 

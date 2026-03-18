@@ -5,6 +5,7 @@ import { Request, Response } from "express";
 import { publicPath } from "@/index";
 import {access,unlink} from "fs/promises";
 import { calculateSkip, calculateTotalPages, TAKE } from "@/utils/pagination";
+import { capitalizeLetter } from "@/utils/capitalizeLetter";
 
 const API_URL = 'http://localhost:3000'
 
@@ -23,7 +24,7 @@ export class GuvernmentEntityController{
       const guvernmentFormatted = guvernmentEntities.map((guvernment)=>{
         return {
           id:guvernment.id,
-          name:guvernment.name,
+          name:capitalizeLetter(guvernment.name),
           description:guvernment.description,
           isSubGuvernment:(!guvernment.isHaveSubGubernment && guvernment?.parentGubernment?.id) ? true : false,
           id_guvernment_parent:guvernment?.parentGubernment?.id,
@@ -48,7 +49,7 @@ export class GuvernmentEntityController{
         message:"Entidad gubernamental obtenida correctamente",
         data:{
           id:guvernmentEntity.id,
-          name:guvernmentEntity.name,
+          name:capitalizeLetter(guvernmentEntity.name),
           description:guvernmentEntity.description,
           isSubGuvernment:(!guvernmentEntity.isHaveSubGubernment && guvernmentEntity?.parentGubernment?.id) ? true : false,
           id_guvernment_parent:guvernmentEntity?.parentGubernment?.id,
@@ -137,7 +138,7 @@ export class GuvernmentEntityController{
         }
       }
 
-      guvernment_entity_updated.name = guvernment_data.name
+      guvernment_entity_updated.name = guvernment_data.name.toLowerCase()
       guvernment_entity_updated.description = guvernment_data.description
       guvernment_entity_updated.active = true
       const guvernment_entity_result = await this.guvernmentEntityService.update(id,guvernment_entity_updated)
@@ -219,7 +220,9 @@ export class GuvernmentEntityController{
 
   totalRegister = async(req:Request,res:Response)=>{
     try {
-      const totalGuvernmentEntities = await this.guvernmentEntityService.totalRegister()
+      const search = req.query.search ? String(req.query.search) : null
+      console.log("search",search)
+      const totalGuvernmentEntities = await this.guvernmentEntityService.totalRegister(search)
       const totalPages = calculateTotalPages(totalGuvernmentEntities)
       return res.status(200).json({
         message:"Total de páginas encontradas correctamente",
@@ -230,6 +233,7 @@ export class GuvernmentEntityController{
         }
       })
     } catch (error) {
+      console.error("error aqui",error)
       res.status(500).json({message:"Error al obtener el total de páginas"})
     }
   }

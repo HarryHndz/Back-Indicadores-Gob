@@ -66,8 +66,16 @@ export class GuvernmentEntityService{
   async delete(id:number){
     return await this.guvernmentEntityRepository.delete(id)
   }
-  async totalRegister(){
-    return await this.guvernmentEntityRepository.count()
+  async totalRegister(search:string|null = null){
+    let where:FindOptionsWhere<GuvernmentEntity> = {}
+    if (search) {
+      where = {
+        name: Like(`%${search.toLowerCase()}%`) 
+      }
+    }
+    return await this.guvernmentEntityRepository.count({
+      where
+    })
   }
 
 }

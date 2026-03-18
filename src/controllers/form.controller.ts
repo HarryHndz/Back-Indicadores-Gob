@@ -1,6 +1,7 @@
 import { Form } from "@/entities";
 import { FormService, TFormService } from "@/service/form.service";
 import { GuvernmentEntityService, TGuvernmentEntityService } from "@/service/guvernment-entity.service";
+import { capitalizeLetter } from "@/utils/capitalizeLetter";
 import { calculateSkip, calculateTotalPages, TAKE } from "@/utils/pagination";
 import { Request, Response } from "express";
 
@@ -25,7 +26,7 @@ export class FormController{
         const formsFormatted = formsByGubernment.map((form)=>{
           return {
             id:form.id,
-            name:form.name,
+            name:capitalizeLetter(form.name),
             active:form.active,
             description:form.description,
             createdAt:form.createdAt,
@@ -40,7 +41,7 @@ export class FormController{
           data:{
             forms:formsFormatted,
             total:formsByGubernment.length,
-            guvernment_name:guvernamentExits.name,
+            guvernment_name:capitalizeLetter(guvernamentExits.name),
           }
         })
       }
@@ -77,9 +78,13 @@ export class FormController{
       if(!form){
         return res.status(404).json({message:"Formulario no encontrado"})
       }
+      const formFormatted: Form = {
+        ...form,
+        name: capitalizeLetter(form.name)
+      }
       res.status(200).json({
         message:"Formulario obtenido correctamente",
-        data:form
+        data:formFormatted
       })
     } catch (error) {
       res.status(500).json({message:"Error al obtener el formulario"})
@@ -115,7 +120,7 @@ export class FormController{
       }
       const form = req.body
       const form_data = new Form()
-      form_data.name = form.name
+      form_data.name = form.name.toLowerCase()
       form_data.description = form.description
       form_data.active = true
       form_data.yearFiscal = form?.year_fiscal ?? undefined

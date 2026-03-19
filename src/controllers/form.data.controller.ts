@@ -8,6 +8,7 @@ import { GuvernmentEntityService, TGuvernmentEntityService } from "@/service/guv
 import { FormData, Topic } from "@/entities";
 import { TUserService, UserService } from "@/service/user.service";
 import { calculateSkip, calculateTotalPages, TAKE } from "@/utils/pagination";
+import { capitalizeLetter } from "@/utils/capitalizeLetter";
 export class FormDataController{
   private formDataService:TFormDataService
   private fieldService:TFieldService
@@ -41,8 +42,8 @@ export class FormDataController{
           id_form:data.form.id,
           id_user:data.user.id,
           username:data.user.name,
-          form_name:data.form.name,
-          topic_name:data.topic?.name ?? undefined,
+          form_name:capitalizeLetter(data.form.name),
+          topic_name:data.topic?.name ? data.topic.name.toUpperCase() : undefined,
         }
       })
       return res.status(200).json({
@@ -61,9 +62,10 @@ export class FormDataController{
     if(!form_exist){
       return res.status(404).json({message:"Formulario no encontrado"})
     }
-    const {page} = req.query
+    const {page,search} = req.query
+    const searchValue = search ? String(search) : undefined
     const skip = calculateSkip(Number(page || 1))
-    const formData = await this.formDataService.findByFormId(form_exist.id,skip)
+    const formData = await this.formDataService.findByFormId(form_exist.id,skip,searchValue)
     const formDataFormatted = formData.map((data)=>{ 
       return {
         id:data.id,
@@ -73,10 +75,10 @@ export class FormDataController{
         active:data.active,
         created_at:data.createdAt,
         id_form:data.form.id,
-        form_name:data.form.name,
-        topic_name:data.topic?.name ?? undefined,
+        form_name:capitalizeLetter(data.form.name),
+        topic_name:data.topic?.name ? data.topic.name.toUpperCase(): undefined,
         id_user:data.user.id,
-        username:data.user.name,
+        username:capitalizeLetter(data.user.name),
       }
     })
     return res.status(200).json({
@@ -104,10 +106,10 @@ export class FormDataController{
           active:data.active,
           created_at:data.createdAt,
           id_form:data.form.id,
-          form_name:data.form.name,
-          topic_name:data.topic?.name ?? undefined,
+          form_name:capitalizeLetter(data.form.name),
+          topic_name:data.topic?.name ? data.topic.name.toUpperCase() : undefined,
           id_user:data.user.id,
-          username:data.user.name,
+          username:capitalizeLetter(data.user.name),
         }
       })
       return res.status(200).json({
@@ -119,6 +121,7 @@ export class FormDataController{
       return res.status(500).json({message:"Error al obtener los FormData"})
     }
   }
+
   findById = async(req:Request,res:Response)=>{
     try {
       const {id} = req.params
@@ -136,7 +139,7 @@ export class FormDataController{
         updatedAt:formData.updatedAt,
         id_form:formData.form.id,
         id_user:formData.user.id,
-        user_name:formData.user.name,
+        user_name:capitalizeLetter(formData.user.name),
       }
       return res.status(200).json({
         message:"FormData obtenido correctamente",
@@ -146,6 +149,7 @@ export class FormDataController{
       res.status(500).json({message:"Error al obtener el FormData"})
     }
   }
+
   create = async(req:Request,res:Response)=>{
     try {
       const formInfo = req.body
@@ -182,7 +186,6 @@ export class FormDataController{
         if (!topic ) {
           return res.status(404).json({message:"Topic no encontrado"})
         }
-        console.log("formExist.topic",formExist.topic.find(t=>t.id === topic?.id))
         if (!formExist.topic.find(t=>t.id === topic?.id)) {
           return res.status(400).json({
             message: "El Tema no pertenece al Formulario"
@@ -235,6 +238,7 @@ export class FormDataController{
       res.status(500).json({message:"Error al crear el FormData"})
     }
   }
+
   update = async(req:Request,res:Response)=>{
     try {
       const {id} = req.params
@@ -317,6 +321,7 @@ export class FormDataController{
       res.status(500).json({message:"Error al actualizar el FormData"})
     }
   }
+
   delete = async(req:Request,res:Response)=>{
     try {
       const {id} = req.params
@@ -332,6 +337,7 @@ export class FormDataController{
       res.status(500).json({message:"Error al eliminar el FormData"})
     }
   }
+
   findAllByTopicId = async(req:Request,res:Response)=>{
     try {
       const topicId = req.params.topicId
@@ -351,10 +357,10 @@ export class FormDataController{
           active:data.active,
           created_at:data.createdAt,
           id_form:data.form.id,
-          form_name:data.form.name,
-          topic_name:data.topic?.name ?? undefined,
+          form_name:capitalizeLetter(data.form.name),
+          topic_name:data.topic?.name ? data.topic.name.toUpperCase() : undefined,
           id_user:data.user.id,
-          username:data.user.name,
+          username:capitalizeLetter(data.user.name),
         }
       })
       return res.status(200).json({
@@ -383,14 +389,14 @@ export class FormDataController{
           description: form.description,
           active: form.active,
           id_guvernment: form.guvernment.id,
-          gubernment_name: form.guvernment.name,
+          gubernment_name: capitalizeLetter(form.guvernment.name),
           created_at: form.createdAt,
           topics:form.topic.map((topic)=>{
             return {
               id:topic?.id,
-              name:topic?.name,
+              name:topic?.name ? topic.name.toUpperCase() : undefined,
               id_form:form.id,
-              form_name:form.name,
+              form_name:capitalizeLetter(form.name),
               year_fiscal:topic?.yearFiscal ?? undefined,
               createdAt:topic?.createdAt,
               update_period:topic?.update_period ?? undefined,
@@ -407,6 +413,7 @@ export class FormDataController{
       res.status(500).json({message:"Error al obtener los formularios con temas"})
     }
   }
+
   findFormByIdWithFields = async(req:Request,res:Response)=>{
     try {
       const {id} = req.params
@@ -418,8 +425,8 @@ export class FormDataController{
       const fieldsFormatted = fields.map((field)=>{
         return {
           id:field.id,
-          name:field.key,
-          label:field.label,
+          name:capitalizeLetter(field.key),
+          label:capitalizeLetter(field.label),
           type:field.type,
           placeholder:field.placeholder,
           options:field.options?.options ?? undefined,
@@ -438,6 +445,7 @@ export class FormDataController{
       res.status(500).json({message:"Error al obtener el formulario con campos"})
     }
   }
+
   findFormByTopicIdWithFields = async(req:Request,res:Response)=>{
     try {
       const {topicId} = req.params
@@ -450,8 +458,8 @@ export class FormDataController{
       const fieldsFormatted = fields.map((field)=>{
         return {
           id:field.id,
-          name:field.key,
-          label:field.label,
+          name:capitalizeLetter(field.key),
+          label:capitalizeLetter(field.label),
           type:field.type,
           placeholder:field.placeholder,
           options:field.options?.options ?? undefined,
@@ -474,14 +482,15 @@ export class FormDataController{
 
   totalRegister = async(req:Request,res:Response)=>{
     try {
-      const {formId,topicId} = req.query
+      const {formId,topicId,search} = req.query
+      const searchValue = search ? String(search): undefined
       let totalFormData:number
       if(formId){
-        totalFormData = await this.formDataService.totalRegisterByFormId(Number(formId))
+        totalFormData = await this.formDataService.totalRegisterByFormId(Number(formId),searchValue)
       }else if(topicId){
-        totalFormData = await this.formDataService.totalRegisterByTopicId(Number(topicId))
+        totalFormData = await this.formDataService.totalRegisterByTopicId(Number(topicId),searchValue)
       }else{
-        totalFormData = await this.formDataService.totalRegister()
+        totalFormData = await this.formDataService.totalRegister(searchValue)
       }
       const totalPages = calculateTotalPages(totalFormData)
       return res.status(200).json({

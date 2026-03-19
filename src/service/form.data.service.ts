@@ -1,7 +1,8 @@
-import { Repository } from "typeorm"
+import { FindOptionsWhere, Like, Repository } from "typeorm"
 import { FormData } from "@/entities/index"
 import { AppDataSource } from "@/config/db"
 import { TAKE } from "@/utils/pagination"
+import { WhereClause } from "typeorm/query-builder/WhereClause.js"
 
 export class FormDataService {
   private formDataRepository: Repository<FormData>
@@ -50,13 +51,30 @@ export class FormDataService {
   async delete(id:number){
     return await this.formDataRepository.delete(id)
   }
-  async findByFormId(formId:number,skip:number=1){
+  async findByFormId(formId:number,skip:number=1,search?:string){
     return await this.formDataRepository.find({
-      where:{
-        form:{
-          id:formId
-        }
-      },
+      where: search
+        ? [
+            {
+              form: {
+                id: formId,
+                name: Like(`%${search.toLowerCase()}%`),
+              },
+            },
+            {
+              form: {
+                id: formId,
+              },
+              topic: {
+                name: Like(`%${search.toLowerCase()}%`),
+              },
+            },
+          ]
+        : {
+            form: {
+              id: formId,
+            },
+          },
       select:{
         id:true,
         topic:{
@@ -157,20 +175,68 @@ export class FormDataService {
       skip:skip,
     })
   }
-  async totalRegister(){
-    return await this.formDataRepository.count()
+  async totalRegister(search?:string){
+    return await this.formDataRepository.count({
+      where: search ? [
+        {
+          form: {
+            name: Like(`%${search.toLowerCase()}%`),
+          }
+        },
+        {
+          topic:{
+            name: Like(`%${search.toLowerCase()}%`),
+          }
+        }
+      ] : undefined
+    })
   }
-  async totalRegisterByFormId(formId:number){
-    return await this.formDataRepository.countBy({
-      form:{
-        id:formId
+  async totalRegisterByFormId(formId:number,search?:string){
+    console.log("final",search)
+    return await this.formDataRepository.count({
+      where: search ? [
+        {
+          form: {
+            id: formId,
+            name: Like(`%${search.toLowerCase()}%`),
+          }
+        },
+        {
+          form:{
+            id:formId
+          },
+          topic:{
+            name: Like(`%${search.toLowerCase()}%`),
+          }
+        }
+      ] : {
+        form:{
+          id:formId
+        }
       }
     })
   }
-  async totalRegisterByTopicId(topicId:number){
-    return await this.formDataRepository.countBy({
-      topic:{
-        id:topicId
+  async totalRegisterByTopicId(topicId:number,search?:string){
+    return await this.formDataRepository.count({
+      where: search ? [
+        {
+          topic:{
+            id:topicId,
+            name:Like(`%${search.toLowerCase()}%`)
+          }
+        },
+        {
+          topic:{
+            id:topicId
+          },
+          form:{
+            name:Like(`%${search.toLowerCase()}%`)
+          }
+        }
+      ] : {
+        topic:{
+          id:topicId
+        }
       }
     })
   }

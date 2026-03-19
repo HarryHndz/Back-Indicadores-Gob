@@ -10,7 +10,8 @@ export class TopicController{
   }
   findAll = async(req:Request,res:Response)=>{
     try {
-      const topics = await this.topicService.findAll()
+      const search = req.query.search ? String(req.query.search) : undefined
+      const topics = await this.topicService.findAll(search)
       const topicsFormatted = topics.map((t)=>({
         ...t,
         name:t.name.toUpperCase()
@@ -129,7 +130,8 @@ export class TopicController{
       if(!formExits){
         return res.status(404).json({message:"Formulario no encontrado"})
       }
-      const topics = await this.topicService.findByFormId(Number(formId))
+      const search = req.query.search ? String(req.query.search) : undefined
+      const topics = await this.topicService.findByFormId(Number(formId),search)
       const topicsFormatted = topics.map((topic)=>{
         return {
           id:topic.id,

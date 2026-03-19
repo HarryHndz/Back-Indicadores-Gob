@@ -38,6 +38,7 @@ export class FieldController{
       res.status(500).json({message:"Error al obtener el campo"})
     }
   }
+  
   create = async(req:Request,res:Response)=>{
     try {
       const fieldData = new Field()
@@ -71,6 +72,7 @@ export class FieldController{
       res.status(500).json({message:"Error al crear el campo"})
     }
   }
+
   update = async(req:Request,res:Response)=>{
     try {
       const {id} = req.params
@@ -94,6 +96,7 @@ export class FieldController{
       res.status(500).json({message:"Error al actualizar el campo"})
     }
   }
+
   delete = async(req:Request,res:Response)=>{
     try {
       const {id} = req.params
@@ -105,6 +108,7 @@ export class FieldController{
       res.status(500).json({message:"Error al eliminar el campo"})
     }
   }
+
   findAll = async(req:Request,res:Response)=>{
     try {
       const {page} = req.query
@@ -124,6 +128,7 @@ export class FieldController{
       res.status(500).json({message:"Error al obtener los campos"})
     }
   }
+
   findAllByFormId = async(req:Request,res:Response)=>{
     try {
       const {formId} = req.params
@@ -133,8 +138,9 @@ export class FieldController{
         return res.status(404).json({message:"Formulario no encontrado"})
       }
       const page = Number(req.query.page || 1)
+      const search = req.query.search  ? String(req.query.search) : undefined
       const skip = calculateSkip(page)
-      const fields = await this.fieldService.findAllByFormId(Number(formId),skip)
+      const fields = await this.fieldService.findAllByFormId(Number(formId),skip,search)
       const fieldsFormatted = fields.map((field)=>{
         return {
           id:field.id,
@@ -164,6 +170,7 @@ export class FieldController{
       res.status(500).json({message:"Error al obtener los campos"})
     }
   }
+
   findAllByTopicId = async(req:Request,res:Response)=>{
     try {
       const {topicId} = req.params
@@ -188,6 +195,7 @@ export class FieldController{
       res.status(500).json({message:"Error al obtener los campos"})
     }
   }
+
   validateField = async(req:Request,res:Response)=>{
     try {
       return res.status(200).json({
@@ -210,16 +218,18 @@ export class FieldController{
       res.status(500).json({message:"Error al obtener los municipios"})
     }
   }
+
   totalRegister = async(req:Request,res:Response)=>{
     try {
-      const {formId,topicId}  = req.query
+      const {formId,topicId,search}  = req.query
+      const searchParam = search ? String(search) : undefined
       let totalFields:number
       if(formId){
-        totalFields = await this.fieldService.totalRegisterByFormId(Number(formId))
+        totalFields = await this.fieldService.totalRegisterByFormId(Number(formId),searchParam)
       }else if(topicId){
-        totalFields = await this.fieldService.totalRegisterByTopicId(Number(topicId))
+        totalFields = await this.fieldService.totalRegisterByTopicId(Number(topicId),searchParam)
       }else{
-        totalFields = await this.fieldService.totalRegister()
+        totalFields = await this.fieldService.totalRegister(searchParam)
       }
       const totalPages = calculateTotalPages(totalFields)
       return res.status(200).json({

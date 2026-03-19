@@ -1,13 +1,17 @@
 import {Topic} from '@/entities/index'
-import {Repository} from 'typeorm'
+import {Like, Repository} from 'typeorm'
 import { AppDataSource } from '@/config/db'
 export class TopicService{
   private topicRepository:Repository<Topic>
   constructor(){
     this.topicRepository = AppDataSource.getRepository(Topic)
   }
-  async findAll(){
-    return await this.topicRepository.find()
+  async findAll(search?:string){
+    return await this.topicRepository.find({
+      where:{
+        name: search ? Like(`%${search.toLowerCase()}%`) : undefined,
+      }
+    })
   }
   async findById(id:number){
     return await this.topicRepository.findOneBy({id})
@@ -21,12 +25,13 @@ export class TopicService{
   async delete(id:number){
     return await this.topicRepository.delete(id)
   }
-  async findByFormId(formId:number){
+  async findByFormId(formId:number,search?:string){
     return await this.topicRepository.find({
       where: {
         form: {
           id: formId,
-        }
+        },
+        name: search ? Like(`%${search.toLowerCase()}%`) : undefined,
       },
       select:{
         id:true,

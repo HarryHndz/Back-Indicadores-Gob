@@ -1,6 +1,6 @@
 import { AppDataSource } from "@/config/db";
 import { Form } from "@/entities/index";
-import { Repository } from "typeorm";
+import { FindOptionsWhere, Like, Repository } from "typeorm";
 import { TAKE } from "@/utils/pagination";
 
 export class FormService{
@@ -9,8 +9,13 @@ export class FormService{
     this.formRepository = AppDataSource.getRepository(Form)
   }
 
-  async findAll(skip:number=1){
+  async findAll(skip:number=1,search?:string){
+    let where:FindOptionsWhere<Form> = {}
+    if(search){
+      where.name = Like(`%${search.toLowerCase()}%`)
+    }
     return await this.formRepository.find({
+      where,
       relations:{
         guvernment:true,
         fields:true,
@@ -76,12 +81,14 @@ export class FormService{
   async delete(id:number){
     return await this.formRepository.delete(id)
   }
-  async findAllByGubernmentId(gubernmentId:number,skip:number=1){
+
+  async findAllByGubernmentId(gubernmentId:number,skip:number=1,search?:string){
     return await this.formRepository.find({
       where:{
         guvernment:{
           id:gubernmentId
-        }
+        },
+        name: search ? Like(`%${search.toLowerCase()}%`) : undefined,
       },
       relations:{
         guvernment:true,
@@ -143,14 +150,23 @@ export class FormService{
       take:TAKE
     })
   }
-  async totalRegister(){
-    return await this.formRepository.count()
+
+  async totalRegister(search?:string){
+    let where:FindOptionsWhere<Form> = {}
+    if(search){
+      where.name = Like(`%${search.toLowerCase()}%`)
+    }
+    return await this.formRepository.count({
+      where,
+    })
   }
-  async totalRegisterByGubernmentId(gubernmentId:number){
+  
+  async totalRegisterByGubernmentId(gubernmentId:number,search?:string){
     return await this.formRepository.countBy({
       guvernment:{
         id:gubernmentId
-      }
+      },
+      name: search ? Like(`%${search.toLowerCase()}%`) : undefined,
     })
   }
 }

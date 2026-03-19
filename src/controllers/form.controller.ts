@@ -15,14 +15,15 @@ export class FormController{
 
   findAll = async (req:Request,res:Response)=>{
     try {
-      const {gubernmentId,page} = req.query
+      const {gubernmentId,page,search} = req.query
+      const searchValue = search ? String(search) : undefined
       const skip = calculateSkip(Number(page || 1))
       if (gubernmentId) {
         const guvernamentExits = await this.guvernmentEntityService.findById(Number(gubernmentId))
         if(!guvernamentExits){
           return res.status(404).json({message:"Entidad gubernamental no encontrada"})
         }
-        const formsByGubernment = await this.formService.findAllByGubernmentId(guvernamentExits.id,skip)
+        const formsByGubernment = await this.formService.findAllByGubernmentId(guvernamentExits.id,skip,searchValue)
         const formsFormatted = formsByGubernment.map((form)=>{
           return {
             id:form.id,
@@ -45,11 +46,11 @@ export class FormController{
           }
         })
       }
-      const forms = await this.formService.findAll(skip)
+      const forms = await this.formService.findAll(skip,searchValue)
       const formsFormatted = forms.map((form)=>{
         return {
           id:form.id,
-          name:form.name,
+          name:capitalizeLetter(form.name),
           active:form.active,
           description:form.description,
           createdAt:form.createdAt,
@@ -155,9 +156,10 @@ export class FormController{
 
   totalRegister = async(req:Request,res:Response)=>{
     try {
-      const {gubernmentId} = req.query
+      const {gubernmentId,search} = req.query
+      const searchValue = search ? String(search) : undefined
       if (gubernmentId) {
-        const totalForms = await this.formService.totalRegisterByGubernmentId(Number(gubernmentId))
+        const totalForms = await this.formService.totalRegisterByGubernmentId(Number(gubernmentId),searchValue)
         const totalPages = calculateTotalPages(totalForms)
         return res.status(200).json({
           message:"Total de formularios encontrados correctamente",
@@ -168,7 +170,7 @@ export class FormController{
           }
         })
       }
-      const totalForms = await this.formService.totalRegister()
+      const totalForms = await this.formService.totalRegister(searchValue)
       const totalPages = calculateTotalPages(totalForms)
       return res.status(200).json({
         message:"Total de formularios encontrados correctamente",

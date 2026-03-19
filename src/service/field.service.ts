@@ -1,5 +1,5 @@
 import {Field} from '@/entities/index'
-import {Repository} from 'typeorm'
+import {Like, Repository} from 'typeorm'
 import { AppDataSource } from '@/config/db'
 import { TAKE } from '@/utils/pagination'
 
@@ -9,12 +9,13 @@ export class FieldService{
     this.fieldRepository = AppDataSource.getRepository(Field)
   }
 
-  async findAllByFormId(formId:number,skip:number=1){
+  async findAllByFormId(formId:number,skip:number=1,search?:string){
     return await this.fieldRepository.find({
       where:{
         form:{
           id:formId
-        }
+        },
+        key: search ? Like(`%${search.toLowerCase()}%`) : undefined,
       },
       select:{
         id:true,
@@ -95,21 +96,27 @@ export class FieldService{
       },
     })
   }
-  async totalRegister(){
-    return await this.fieldRepository.count()
-  }
-  async totalRegisterByFormId(formId:number){
-    return await this.fieldRepository.countBy({
-      form:{
-        id:formId
+  async totalRegister(search?:string){
+    return await this.fieldRepository.count({
+      where:{
+        key: search ? Like(`%${search.toLowerCase()}%`) : undefined,
       }
     })
   }
-  async totalRegisterByTopicId(topicId:number){
+  async totalRegisterByFormId(formId:number,search?:string){
+    return await this.fieldRepository.countBy({
+      form:{
+        id:formId
+      },
+      key: search ? Like(`%${search.toLowerCase()}%`) : undefined,
+    })
+  }
+  async totalRegisterByTopicId(topicId:number,search?:string){
     return await this.fieldRepository.countBy({
       topic:{
         id:topicId
-      }
+      },
+      key: search ? Like(`%${search.toLowerCase()}%`) : undefined,
     })
   }
 }

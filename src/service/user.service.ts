@@ -1,7 +1,7 @@
 import { AppDataSource } from "@/config/db";
 import { User } from "@/entities/User";
 import { TAKE } from "@/utils/pagination";
-import { Repository } from "typeorm";
+import { Like, Repository } from "typeorm";
 
 export class UserService{
   private userRepository: Repository<User>
@@ -33,8 +33,11 @@ export class UserService{
       }
     })
   }
-  async findAll(skip:number=1){
+  async findAll(skip:number=1,search?:string){
     return await this.userRepository.find({
+      where: search ? {
+        name: Like(`%${search.toLowerCase()}%`)
+      } : undefined,
       select:{
         id:true,
         name:true,
@@ -76,14 +79,19 @@ export class UserService{
       }
     });
   }
-  async totalRegister(){
-    return await this.userRepository.count()
+  async totalRegister(search?:string){
+    return await this.userRepository.count({
+      where: search ? {
+        name: Like(`%${search.toLowerCase()}%`)
+      } : undefined,
+    })
   }
-  async totalRegisterByGuvernmentId(guvernmentId:number){
+  async totalRegisterByGuvernmentId(guvernmentId:number,search?:string){
     return await this.userRepository.countBy({
       guvernment:{
         id:guvernmentId
-      }
+      },
+      name: search ? Like(`%${search.toLowerCase()}%`) : undefined,
     })
   }
 }

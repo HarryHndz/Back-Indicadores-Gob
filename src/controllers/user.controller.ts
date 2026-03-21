@@ -5,6 +5,7 @@ import { User } from "@/entities";
 import { RolService } from "@/service/rol.service";
 import { GuvernmentEntityService } from "@/service/guvernment-entity.service";
 import { calculateSkip, calculateTotalPages, TAKE } from "@/utils/pagination";
+import { capitalizeLetter } from "@/utils/capitalizeLetter";
 export class UserController{
   private userService: UserService
   constructor(){
@@ -21,7 +22,7 @@ export class UserController{
       res.status(200).json({ message: "User found successfully",
         data:{
           id:user.id,
-          name:user.name,
+          name:capitalizeLetter(user.name),
           email:user.email,
           status:user.active,
           id_rol:user.rol.id,
@@ -39,13 +40,14 @@ export class UserController{
 
   findAll = async (req:Request,res:Response)=>{
     try {
-      const {page} = req.query
+      const {page,search} = req.query
       const skip = calculateSkip(Number(page || 1))
-      const users = await this.userService.findAll(skip)
+      const searchValue = search ? String(search) : undefined
+      const users = await this.userService.findAll(skip,searchValue)
       const userFormatted = users.map((user)=>{
         return {
           id:user.id,
-          name:user.name,
+          name:capitalizeLetter(user.name),
           email:user.email,
           active:user.active,
           id_rol:user.rol.id,
@@ -80,8 +82,8 @@ export class UserController{
       }
       const password = await hashPassword(req.body.password)
       const userCreated = new User()
-      userCreated.name = req.body.name
-      userCreated.email = req.body.email
+      userCreated.name = req.body.name.toLowerCase()
+      userCreated.email = req.body.email.toLowerCase()
       userCreated.password = password
       userCreated.active = true
       userCreated.rol = rolUser
@@ -123,8 +125,8 @@ export class UserController{
       }
       const user_data = req.body
       const user_entity = new User()
-      user_entity.name = user_data.name
-      user_entity.email = user_data.email
+      user_entity.name = user_data.name.toLowerCase()
+      user_entity.email = user_data.email.toLowerCase()
       user_entity.rol = rolUser
       user_entity.guvernment = guvernmentUser
       if (user_data.password || user_data.password !== "") {
@@ -156,10 +158,10 @@ export class UserController{
 
   totalRegister = async(req:Request,res:Response)=>{
     try {
-      const {guvernmentId} = req.query
-      console.log("guvernmentId",guvernmentId)
+      const {guvernmentId,search} = req.query
+      const searchValue = search ? String(search) : undefined
       if (guvernmentId) {
-        const totalUsers = await this.userService.totalRegisterByGuvernmentId(Number(guvernmentId))
+        const totalUsers = await this.userService.totalRegisterByGuvernmentId(Number(guvernmentId),searchValue)
         const totalPages = calculateTotalPages(totalUsers)
         return res.status(200).json({
           message:"Total de usuarios encontrados correctamente",
@@ -170,7 +172,7 @@ export class UserController{
           }
         })
       }
-      const totalUsers = await this.userService.totalRegister()
+      const totalUsers = await this.userService.totalRegister(searchValue)
       const totalPages = calculateTotalPages(totalUsers)
       return res.status(200).json({
         message:"Total de usuarios encontrados correctamente",

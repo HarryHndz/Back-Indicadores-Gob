@@ -28,10 +28,12 @@ export class FieldService{
         order_index:true,
         type:true,
         form:{
-          id:true
+          id:true,
+          name:true
         },
         topic:{
-          id:true
+          id:true,
+          name:true
         }
       },
       relations:{
@@ -50,6 +52,30 @@ export class FieldService{
   }
   async findAll(skip:number=1){
     return await this.fieldRepository.find({
+      select:{
+        id:true,
+        key:true,
+        label:true,
+        type:true,
+        placeholder:true,
+        options:true,
+        validations:true,
+        order_index:true,
+        active:true,
+        createdAt:true,
+        form:{
+          id:true,
+          name:true
+        },
+        topic:{
+          id:true,
+          name:true
+        }
+      },
+      relations:{
+        form:true,
+        topic:true,
+      },
       skip:skip,
       take:TAKE,
     })

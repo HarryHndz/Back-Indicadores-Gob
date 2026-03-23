@@ -114,12 +114,25 @@ export class FieldController{
       const {page} = req.query
       const skip = calculateSkip(Number(page || 1))
       const fields = await this.fieldService.findAll(skip)
-      const fieldsFormatted = fields.map((field)=>({
-        ...field,
-        key: capitalizeLetter(field.key),
-        label: capitalizeLetter(field.label)
-        
-      }))
+      const fieldsFormatted = fields.map((field)=>{
+        return {
+          id:field.id,
+          name:capitalizeLetter(field.key),
+          label:capitalizeLetter(field.label),
+          name_topic:field.topic?.name ?? undefined,
+          type:field.type,
+          placeholder:field.placeholder,
+          options:field.options ?? undefined,
+          validations:field.validations.v,
+          order_index:field.order_index,
+          id_form:field.form.id,
+          id_topic:field.topic?.id ?? undefined,
+          active:field.active,
+          createdAt:field.createdAt,
+          form_name:field.form.name,
+          topic_name:field.topic?.name.toUpperCase() ?? undefined,
+        }
+      })
       res.status(200).json({
         message:"Campos obtenidos correctamente",
         data:fieldsFormatted 
@@ -146,6 +159,7 @@ export class FieldController{
           id:field.id,
           name:capitalizeLetter(field.key),
           label:capitalizeLetter(field.label),
+          name_topic:field.topic?.name ?? undefined,
           type:field.type,
           placeholder:field.placeholder,
           options:field.options ?? undefined,
@@ -155,6 +169,8 @@ export class FieldController{
           id_topic:field.topic?.id ?? undefined,
           active:field.active,
           createdAt:field.createdAt,
+          form_name:field.form.name,
+          topic_name:field.topic?.name ?? undefined,
         }
       })
       res.status(200).json({
@@ -163,6 +179,7 @@ export class FieldController{
           fields:fieldsFormatted,
           total:fields.length,
           form_name:formExits.name,
+          guvernment_name:capitalizeLetter(formExits.guvernment.name),
         }
       })
     } catch (error) {

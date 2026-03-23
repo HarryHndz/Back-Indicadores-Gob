@@ -1,6 +1,7 @@
 import { Topic } from "@/entities";
 import { FormService } from "@/service/form.service";
 import { TopicService, TTopicService } from "@/service/topic.service";
+import { capitalizeLetter } from "@/utils/capitalizeLetter";
 import { Request, Response } from "express";
 
 export class TopicController{
@@ -150,7 +151,8 @@ export class TopicController{
         data:{
           topics:topicsFormatted,
           total:topics.length,
-          form_name:formExits.name,
+          form_name:capitalizeLetter(formExits.name),
+          guvernment_name:capitalizeLetter(formExits.guvernment.name),
         }
       })
     } catch (error) {

@@ -84,7 +84,11 @@ export class FormDataController{
     })
     return res.status(200).json({
       message:"FormData por formulario obtenidos correctamente",
-      data:formDataFormatted
+      data:{
+        form_data:formDataFormatted,
+        form_name:capitalizeLetter(form_exist.name),
+        guvernment_name:capitalizeLetter(form_exist.guvernment.name),
+      }
     })
   }
 

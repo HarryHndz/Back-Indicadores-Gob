@@ -180,6 +180,7 @@ export class FieldController{
           total:fields.length,
           form_name:formExits.name,
           guvernment_name:capitalizeLetter(formExits.guvernment.name),
+          id_guvernment:formExits.guvernment.id,
         }
       })
     } catch (error) {

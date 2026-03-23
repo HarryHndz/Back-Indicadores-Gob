@@ -88,6 +88,7 @@ export class FormDataController{
         form_data:formDataFormatted,
         form_name:capitalizeLetter(form_exist.name),
         guvernment_name:capitalizeLetter(form_exist.guvernment.name),
+        id_guvernment:form_exist.guvernment.id,
       }
     })
   }

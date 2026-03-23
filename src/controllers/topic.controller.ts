@@ -153,6 +153,7 @@ export class TopicController{
           total:topics.length,
           form_name:capitalizeLetter(formExits.name),
           guvernment_name:capitalizeLetter(formExits.guvernment.name),
+          id_guvernment:formExits.guvernment.id,
         }
       })
     } catch (error) {

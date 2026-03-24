@@ -16,6 +16,10 @@ export class Form{
   @Column({default: true,type:"boolean"})
   active!: boolean
 
+
+  @Column({default: false,type:"boolean"})
+  isHaveTopics!: boolean
+
   @Column({length:50,type:"varchar",nullable:true})
   yearFiscal!:string | null
 

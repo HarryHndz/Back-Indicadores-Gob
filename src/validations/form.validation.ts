@@ -9,6 +9,7 @@ const baseFormBodySchema = z
     year_fiscal: z.string().min(1).max(50).nullable().optional(),
     update_period: z.string().min(1).max(50).nullable().optional(),
     id_guvernment: z.number().int().positive(),
+    isHaveTopics: z.boolean().optional(),
   })
 
 

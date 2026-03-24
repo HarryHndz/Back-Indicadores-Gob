@@ -27,6 +27,7 @@ export class FormService{
         active:true,
         createdAt:true,
         description:true,
+        isHaveTopics:true,
         guvernment:{
           id:true,
           name:true,
@@ -54,6 +55,7 @@ export class FormService{
         active:true,
         createdAt:true,
         description:true,
+        isHaveTopics:true,
         guvernment:{
           id:true,
           name:true,
@@ -101,6 +103,7 @@ export class FormService{
         active:true,
         createdAt:true,
         description:true,
+        isHaveTopics:true,
         guvernment:{
           id:true,
           name:true,
@@ -134,6 +137,7 @@ export class FormService{
         active:true,
         createdAt:true,
         description:true,
+        isHaveTopics:true,
         guvernment:{
           id:true,
           name:true,

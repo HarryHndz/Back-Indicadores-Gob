@@ -145,7 +145,6 @@ export class TopicController{
           update_period:topic.update_period ?? undefined
         }
       })
-      console.log("formateo los temas")
       return res.status(200).json({
         message:"Temas encontrados correctamente",
         data:{
@@ -154,6 +153,7 @@ export class TopicController{
           form_name:capitalizeLetter(formExits.name),
           guvernment_name:capitalizeLetter(formExits.guvernment.name),
           id_guvernment:formExits.guvernment.id,
+          isHaveTopics:formExits.isHaveTopics,
         }
       })
     } catch (error) {

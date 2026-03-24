@@ -35,6 +35,7 @@ export class FormController{
             total_fields:form.fields.length ?? 0,
             total_data:form.formData.length ?? 0,
             gubernment_name:form.guvernment.name,
+            isHaveTopics:form.isHaveTopics,
           }
         })
         return res.status(200).json({
@@ -58,6 +59,7 @@ export class FormController{
           total_fields:form.fields.length ?? 0,
           total_data:form.formData.length ?? 0,
           gubernment_name:form.guvernment.name,
+          isHaveTopics:form.isHaveTopics,
         }
       })
       return res.status(200).json({
@@ -99,6 +101,7 @@ export class FormController{
       form_data.name = form.name.toLowerCase()
       form_data.description = form.description
       form_data.active = true
+      form_data.isHaveTopics = form?.isHaveTopics ?? false
       form_data.yearFiscal = form?.year_fiscal ?? undefined
       form_data.update_period = form?.update_period ?? undefined
       form_data.guvernment = form.id_guvernment 
@@ -124,6 +127,7 @@ export class FormController{
       form_data.name = form.name.toLowerCase()
       form_data.description = form.description
       form_data.active = true
+      form_data.isHaveTopics = form?.isHaveTopics ?? false
       form_data.yearFiscal = form?.year_fiscal ?? undefined
       form_data.update_period = form?.update_period ?? undefined
       form_data.guvernment = form.id_guvernment 

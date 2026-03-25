@@ -28,6 +28,8 @@ export class FormService{
         createdAt:true,
         description:true,
         isHaveTopics:true,
+        yearFiscal:true,
+        update_period:true,
         guvernment:{
           id:true,
           name:true,
@@ -56,6 +58,8 @@ export class FormService{
         createdAt:true,
         description:true,
         isHaveTopics:true,
+        yearFiscal:true,
+        update_period:true,
         guvernment:{
           id:true,
           name:true,
@@ -104,6 +108,8 @@ export class FormService{
         createdAt:true,
         description:true,
         isHaveTopics:true,
+        yearFiscal:true,
+        update_period:true,
         guvernment:{
           id:true,
           name:true,
@@ -138,6 +144,8 @@ export class FormService{
         createdAt:true,
         description:true,
         isHaveTopics:true,
+        yearFiscal:true,
+        update_period:true,
         guvernment:{
           id:true,
           name:true,

@@ -212,7 +212,7 @@ export class FormDataController{
         }
 
       }else{
-        const fields = await this.fieldService.findAllByFormId(Number(formId))
+        const fields = await this.fieldService.findAllByFormId(Number(formId),0)
         if (fields.length === 0) {
           return res.status(404).json({message:"Formulario no tiene campos"})
         }
@@ -303,7 +303,7 @@ export class FormDataController{
         }
 
       }else{
-        const fields = await this.fieldService.findAllByFormId(Number(formId))
+        const fields = await this.fieldService.findAllByFormId(Number(formId),0)
         if (fields.length === 0) {
           return res.status(404).json({message:"Formulario no tiene campos"})
         }
@@ -422,12 +422,15 @@ export class FormDataController{
 
   findFormByIdWithFields = async(req:Request,res:Response)=>{
     try {
-      const {id} = req.params
-      const form = await this.formService.findById(Number(id))
+      const {formId} = req.params
+      if(!formId){
+        return res.status(400).json({message:"El id del formulario es requerido"})
+      }
+      const form = await this.formService.findById(Number(formId))
       if(!form){
         return res.status(404).json({message:"Formulario no encontrado"})
       }
-      const fields = await this.fieldService.findAllByFormId(Number(id))
+      const fields = await this.fieldService.findAllByFormId(Number(formId),0)
       const fieldsFormatted = fields.map((field)=>{
         return {
           id:field.id,

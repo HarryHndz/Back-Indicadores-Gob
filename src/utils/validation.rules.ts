@@ -3,6 +3,7 @@ import { TDataType } from "@/data/types/TDataType";
 
 export interface ValidationRuleInfo{
   name: string;
+  type: string;
   description: string;
   value_type?: "number" | "string" | "boolean" | "date" | "options" | "select";
   options?: {
@@ -26,22 +27,26 @@ export const DATA_TYPE_VALIDATION_RULES: DataTypeValidationRules[] = [
     name:"Texto",
     rules: [
       {
-        name: "required",
+        name: "requerido",
+        type:"required",
         description: "El campo es obligatorio y no puede estar vacío",
         value_type: "boolean",
       },
       {
-        name: "min",
+        name: "minimo",
+        type:"min",
         description: "Longitud mínima de caracteres permitida",
         value_type: "number",
       },
       {
-        name: "max",
+        name: "maximo",
+        type:"max",
         description: "Longitud máxima de caracteres permitida",
         value_type: "number",
       },
       {
-        name:"format",
+        name:"formato",
+        type:"format",
         description:"Formato especifico del texto",
         value_type:"select",
         options:[
@@ -68,22 +73,26 @@ export const DATA_TYPE_VALIDATION_RULES: DataTypeValidationRules[] = [
     name:"Número",
     rules: [
       {
-        name: "required",
+        name: "requerido",
+        type:"required",
         description: "El campo es obligatorio y debe tener un valor numérico",
         value_type: "boolean",
       },
       {
-        name: "min",
+        name: "minimo",
+        type:"min",
         description: "Valor mínimo permitido",
         value_type: "number",
       },
       {
-        name: "max",
+        name: "maximo",
+        type:"max",
         description: "Valor máximo permitido",
         value_type: "number",
       },
       {
-        name:"number_type",
+        name:"tipo numero",
+        type:"number_type",
         description:"Tipo de número (entero o con decimales)",
         value_type:"select",
         options:[
@@ -98,7 +107,8 @@ export const DATA_TYPE_VALIDATION_RULES: DataTypeValidationRules[] = [
         ]
       },
       {
-        name:"sign",
+        name:"signo",
+        type:"sign",
         description:"Signo del número (positivo o negativo)",
         value_type:"select",
         options:[
@@ -119,7 +129,8 @@ export const DATA_TYPE_VALIDATION_RULES: DataTypeValidationRules[] = [
     name:"Booleano",
     rules: [
       {
-        name: "required",
+        name: "requerido",
+        type:"required",
         description: "El campo es obligatorio y debe tener un valor booleano",
         value_type: "boolean",
       },
@@ -130,7 +141,8 @@ export const DATA_TYPE_VALIDATION_RULES: DataTypeValidationRules[] = [
     name:"Fecha",
     rules: [
       {
-        name: "required",
+        name: "requerido",
+        type:"required",
         description: "El campo es obligatorio y debe tener una fecha válida",
         value_type: "boolean",
       },
@@ -141,7 +153,8 @@ export const DATA_TYPE_VALIDATION_RULES: DataTypeValidationRules[] = [
     name:"Fecha y hora",
     rules: [
       {
-        name: "required",
+        name: "requerido",
+        type:"required",
         description: "El campo es obligatorio y debe tener una fecha y hora válida",
         value_type: "boolean",
       },
@@ -152,7 +165,8 @@ export const DATA_TYPE_VALIDATION_RULES: DataTypeValidationRules[] = [
     name:"Opciones",
     rules: [
       {
-        name: "required",
+        name: "requerido",
+        type:"required",
         description: "El campo es obligatorio y debe seleccionar una de las opciones disponibles",
         value_type: "boolean",
       },

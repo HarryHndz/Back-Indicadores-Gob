@@ -36,6 +36,8 @@ export class FormController{
             total_data:form.formData.length ?? 0,
             gubernment_name:form.guvernment.name,
             isHaveTopics:form.isHaveTopics,
+            year_fiscal:form.yearFiscal,
+            update_period:form.update_period,
           }
         })
         return res.status(200).json({
@@ -60,6 +62,8 @@ export class FormController{
           total_data:form.formData.length ?? 0,
           gubernment_name:form.guvernment.name,
           isHaveTopics:form.isHaveTopics,
+          year_fiscal:form.yearFiscal,
+          update_period:form.update_period,
         }
       })
       return res.status(200).json({
@@ -83,7 +87,7 @@ export class FormController{
       }
       const formFormatted: Form = {
         ...form,
-        name: capitalizeLetter(form.name)
+        name: capitalizeLetter(form.name),
       }
       res.status(200).json({
         message:"Formulario obtenido correctamente",

@@ -25,7 +25,6 @@ export const publicPath = path.join(__dirname, 'public');
 
 
 export const app = express();
-console.log("publicPath",publicPath)
 app.use(express.json());
 app.use(express.static(publicPath))
 app.use(cors({

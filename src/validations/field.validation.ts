@@ -10,7 +10,8 @@ const baseFieldBodySchema = z.object({
   id_form: z.number().int().positive(),
   id_topic: z.number().int().positive().nullable().optional(),
   validations: z.array(z.object({
-    rule: z.string().min(1).max(50),
+    rule: z.string().min(1).max(100),
+    label: z.string().min(1).max(100),
     value: z.any().nullable().optional(),
   })).nullable().optional(),
   options: z.array(z.object({

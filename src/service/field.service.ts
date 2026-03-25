@@ -1,5 +1,5 @@
 import {Field} from '@/entities/index'
-import {Like, Repository} from 'typeorm'
+import {FindManyOptions, Like, Repository} from 'typeorm'
 import { AppDataSource } from '@/config/db'
 import { TAKE } from '@/utils/pagination'
 
@@ -9,7 +9,7 @@ export class FieldService{
     this.fieldRepository = AppDataSource.getRepository(Field)
   }
 
-  async findAllByFormId(formId:number,skip:number=1,search?:string){
+  async findAllByFormId(formId:number,skip:number,search?:string){
     return await this.fieldRepository.find({
       where:{
         form:{
@@ -43,8 +43,8 @@ export class FieldService{
       order:{
         order_index: 'ASC'
       },
-      skip:skip,
-      take:TAKE,
+      skip:skip > 0 ? skip : undefined,
+      take:skip > 0 ? TAKE : undefined,
     })
   }
   async findById(id:number){

@@ -156,5 +156,4 @@ Para entornos productivos, usar `JWT_SECRET` fuerte, HTTPS, y revisar políticas
 ---
 
 ## Licencia
-
-ISC (según `package.json`).
+ISC

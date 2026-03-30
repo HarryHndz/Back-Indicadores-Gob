@@ -7,6 +7,7 @@ import fieldRouter from "./field.routes";
 import formDataRouter from "./form.data.routes";
 import rolRouter from "./rol.routes";
 import uploadRouter from "./upload.routes";
+import indicatorsRouter from "./indicator.routes";
 export{
   authRouter,
   userRouter,
@@ -16,5 +17,6 @@ export{
   fieldRouter,
   formDataRouter,
   rolRouter,
-  uploadRouter
+  uploadRouter,
+  indicatorsRouter
 }

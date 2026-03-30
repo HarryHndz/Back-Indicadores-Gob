@@ -9,7 +9,8 @@ import {
   fieldRouter,
   rolRouter,
   formDataRouter ,
-  uploadRouter
+  uploadRouter,
+  indicatorsRouter
 } from "@/routes";
 import { expressjwt } from 'express-jwt'
 import { SECRET_KEY } from '@/utils/jwt';
@@ -63,6 +64,8 @@ app.use("/api/v1/form-data",formDataRouter)
 app.use("/api/v1/topic",topicRouter)
 app.use("/api/v1/field",fieldRouter)
 app.use("/api/v1/rol",rolRouter)
+app.use("/api/v1/indicators",indicatorsRouter)
+
 
 app.use((err:any, _req:Request, res:Response, _next:Function) => {
   if(err.name === 'UnauthorizedError'){

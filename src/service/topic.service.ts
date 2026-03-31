@@ -1,10 +1,17 @@
 import {Topic} from '@/entities/index'
-import {Like, Repository} from 'typeorm'
+import {In, Like, Repository} from 'typeorm'
 import { AppDataSource } from '@/config/db'
 export class TopicService{
   private topicRepository:Repository<Topic>
   constructor(){
     this.topicRepository = AppDataSource.getRepository(Topic)
+  }
+  async findByIds(ids:number[]){
+    return await this.topicRepository.find({
+      where:{
+        id:In(ids)
+      }
+    })
   }
   async findAll(search?:string){
     return await this.topicRepository.find({

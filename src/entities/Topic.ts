@@ -1,4 +1,4 @@
-import { Entity,PrimaryGeneratedColumn,Column,CreateDateColumn,ManyToOne,JoinColumn,OneToMany, Relation } from "typeorm";
+import { Entity,PrimaryGeneratedColumn,Column,CreateDateColumn,ManyToOne,JoinColumn,OneToMany, Relation, ManyToMany } from "typeorm";
 import { Field, Form } from "@/entities/index";
 
 
@@ -26,7 +26,7 @@ export class Topic {
   @JoinColumn({ name: "id_form" })
   form!: Relation<Form>;
 
-  @OneToMany(() => Field, (field) => field.topic)
+  @ManyToMany(() => Field, (field) => field.topics)
   fields!: Relation<Field>[];
 
 }

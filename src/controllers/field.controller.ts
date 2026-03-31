@@ -2,7 +2,7 @@ import { FieldService, TFieldService } from "@/service/field.service";
 import { Request, Response } from "express";
 import { Field } from "@/entities/index";
 import { FormService } from "@/service/form.service";
-import { TopicService } from "@/service/topic.service";
+import { TopicService, TTopicService } from "@/service/topic.service";
 import { DATA_TYPE_VALIDATION_RULES } from "@/utils/validation.rules";
 import { municipios } from "@/utils/municipios";
 import { calculateSkip, calculateTotalPages, TAKE } from "@/utils/pagination";
@@ -11,8 +11,10 @@ import { capitalizeLetter } from "@/utils/capitalizeLetter";
 
 export class FieldController{
   private fieldService:TFieldService
+  private topicService:TTopicService
   constructor(){
     this.fieldService = new FieldService()
+    this.topicService = new TopicService()
   }
 
   findById =async(req:Request,res:Response)=>{
@@ -47,7 +49,13 @@ export class FieldController{
       fieldData.placeholder = req.body.placeholder
       fieldData.type = req.body.type
       fieldData.form = req.body.id_form
-      fieldData.topic = req.body.id_topic
+      if(req.body.id_topics && req.body.id_topics.length > 0){
+        const topics = await this.topicService.findByIds(req.body.id_topics)
+        if (!topics || topics.length === 0) {
+          return res.status(404).json({message:"Temas no encontrados"})
+        }
+        fieldData.topics = topics
+      }
       fieldData.validations = {v: req.body.validations}
       if(req.body.options){
         if(req.body.municipality_options){
@@ -86,7 +94,7 @@ export class FieldController{
       fieldData.order_index = req.body.order_index
       fieldData.depends_on_value = req.body.depends_on_value
       fieldData.dependsOnField = req.body.dependsOnField
-      fieldData.topic = req.body.topicId
+      fieldData.topics = req.body.id_topics ? req.body.id_topics : []
       const field = await this.fieldService.update(Number(id),fieldData)
       res.status(200).json({
         message:"Campo actualizado correctamente",
@@ -119,18 +127,17 @@ export class FieldController{
           id:field.id,
           name:capitalizeLetter(field.key),
           label:capitalizeLetter(field.label),
-          name_topic:field.topic?.name ?? undefined,
           type:field.type,
           placeholder:field.placeholder,
           options:field.options ?? undefined,
           validations:field.validations.v,
           order_index:field.order_index,
           id_form:field.form.id,
-          id_topic:field.topic?.id ?? undefined,
+          id_topics:field.topics ? field.topics.map((topic)=>topic.id) : undefined,
           active:field.active,
           createdAt:field.createdAt,
           form_name:field.form.name,
-          topic_name:field.topic?.name.toUpperCase() ?? undefined,
+          names_topics:field.topics ? field.topics.map((topic)=>topic.name.toUpperCase()) : undefined,
         }
       })
       res.status(200).json({
@@ -153,26 +160,26 @@ export class FieldController{
       const page = Number(req.query.page || 1)
       const search = req.query.search  ? String(req.query.search) : undefined
       const skip = calculateSkip(page)
-      const fields = await this.fieldService.findAllByFormId(Number(formId),skip,search)
+      const fields = await this.fieldService.findAllByFormId(Number(formId),skip,false,search)
       const fieldsFormatted = fields.map((field)=>{
         return {
           id:field.id,
           name:capitalizeLetter(field.key),
           label:capitalizeLetter(field.label),
-          name_topic:field.topic?.name ?? undefined,
           type:field.type,
           placeholder:field.placeholder,
           options:field.options ?? undefined,
           validations:field.validations.v,
           order_index:field.order_index,
           id_form:field.form.id,
-          id_topic:field.topic?.id ?? undefined,
+          id_topics:field.topics ? field.topics.map((topic)=>topic.id) : undefined,
           active:field.active,
           createdAt:field.createdAt,
           form_name:field.form.name,
-          topic_name:field.topic?.name ?? undefined,
+          names_topics:field.topics ? field.topics.map((topic)=>topic.name.toUpperCase()) : undefined,
         }
       })
+      console.log("los campos formateados",fieldsFormatted[0])
       res.status(200).json({
         message:"Campos obtenidos correctamente",
         data:{

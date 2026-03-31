@@ -1,4 +1,4 @@
-import { Entity,PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, Relation, CreateDateColumn } from "typeorm";
+import { Entity,PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, Relation, CreateDateColumn, ManyToMany, JoinTable } from "typeorm";
 import { Form, Topic } from "@/entities/index";
 
 @Entity()
@@ -47,10 +47,7 @@ export class Field{
   @JoinColumn({ name: "id_form" })
   form!: Relation<Form>
 
-  @ManyToOne(() => Topic, (topic) => topic.fields, {
-    nullable: true,
-    onDelete: "SET NULL",
-  })
-  @JoinColumn({ name: "id_topic" })
-  topic!: Relation<Topic> | null;
+  @ManyToMany(() => Topic, (topic) => topic.fields)
+  @JoinTable()
+  topics!: Relation<Topic>[]
 }

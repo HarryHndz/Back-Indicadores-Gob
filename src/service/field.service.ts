@@ -9,7 +9,7 @@ export class FieldService{
     this.fieldRepository = AppDataSource.getRepository(Field)
   }
 
-  async findAllByFormId(formId:number,skip:number,search?:string){
+  async findAllByFormId(formId:number,skip:number,allData:boolean = false,search?:string){
     return await this.fieldRepository.find({
       where:{
         form:{
@@ -31,20 +31,20 @@ export class FieldService{
           id:true,
           name:true
         },
-        topic:{
+        topics:{
           id:true,
           name:true
         }
       },
       relations:{
         form:true,
-        topic:true,
+        topics:true,
       },
       order:{
         order_index: 'ASC'
       },
-      skip:skip > 0 ? skip : undefined,
-      take:skip > 0 ? TAKE : undefined,
+      skip:!allData ? skip : undefined,
+      take:!allData ? TAKE : undefined,
     })
   }
   async findById(id:number){
@@ -67,14 +67,14 @@ export class FieldService{
           id:true,
           name:true
         },
-        topic:{
+        topics:{
           id:true,
           name:true
         }
       },
       relations:{
         form:true,
-        topic:true,
+        topics:true,
       },
       skip:skip,
       take:TAKE,
@@ -92,7 +92,7 @@ export class FieldService{
   async findAllByTopicId(topicId:number){
     return await this.fieldRepository.find({
       where:{
-        topic:{
+        topics:{
           id:topicId
         }
       },
@@ -111,14 +111,14 @@ export class FieldService{
           id:true,
           name:true
         },
-        topic:{
+        topics:{
           id:true,
           name:true
         }
       },
       relations:{
         form:true,
-        topic:true,
+        topics:true,
       },
     })
   }
@@ -139,7 +139,7 @@ export class FieldService{
   }
   async totalRegisterByTopicId(topicId:number,search?:string){
     return await this.fieldRepository.countBy({
-      topic:{
+      topics:{
         id:topicId
       },
       key: search ? Like(`%${search.toLowerCase()}%`) : undefined,

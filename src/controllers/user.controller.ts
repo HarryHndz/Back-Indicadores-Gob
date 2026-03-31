@@ -129,7 +129,7 @@ export class UserController{
       user_entity.email = user_data.email.toLowerCase()
       user_entity.rol = rolUser
       user_entity.guvernment = guvernmentUser
-      if (user_data.password || user_data.password !== "") {
+      if (user_data.password && user_data.password !== "") {
         const newPassword = await hashPassword(req.body.password)
         user_entity.password = newPassword
       }

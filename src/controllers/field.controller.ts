@@ -159,8 +159,15 @@ export class FieldController{
       }
       const page = Number(req.query.page || 1)
       const search = req.query.search  ? String(req.query.search) : undefined
+      let topics:number[] | undefined = undefined
+      if (req.query.topicsId) {
+        topics =  (Array.isArray(req.query.topicsId) ? req.query.topicsId : [req.query.topicsId])
+        .flatMap((v) => String(v ?? "").split(","))
+        .map((v) => Number(v))
+        .filter((n) => Number.isInteger(n) && n > 0)   
+      }
       const skip = calculateSkip(page)
-      const fields = await this.fieldService.findAllByFormId(Number(formId),skip,false,search)
+      const fields = await this.fieldService.findAllByFormId(Number(formId),skip,false,search,topics)
       const fieldsFormatted = fields.map((field)=>{
         return {
           id:field.id,
@@ -179,7 +186,6 @@ export class FieldController{
           names_topics:field.topics ? field.topics.map((topic)=>topic.name.toUpperCase()) : undefined,
         }
       })
-      console.log("los campos formateados",fieldsFormatted[0])
       res.status(200).json({
         message:"Campos obtenidos correctamente",
         data:{
@@ -247,15 +253,24 @@ export class FieldController{
 
   totalRegister = async(req:Request,res:Response)=>{
     try {
-      const {formId,topicId,search}  = req.query
+      const {formId,topicId,search,topicsId}  = req.query
+
       const searchParam = search ? String(search) : undefined
+      let topicsQuery:number[] | undefined = undefined
+      if (topicsId) {
+        topicsQuery =  (Array.isArray(topicsId) ? topicsId : [topicsId])
+        .flatMap((v) => String(v ?? "").split(","))
+        .map((v) => Number(v))
+        .filter((n) => Number.isInteger(n) && n > 0)  
+      }
+      
       let totalFields:number
       if(formId){
-        totalFields = await this.fieldService.totalRegisterByFormId(Number(formId),searchParam)
+        totalFields = await this.fieldService.totalRegisterByFormId(Number(formId),searchParam,topicsQuery)
       }else if(topicId){
         totalFields = await this.fieldService.totalRegisterByTopicId(Number(topicId),searchParam)
       }else{
-        totalFields = await this.fieldService.totalRegister(searchParam)
+        totalFields = await this.fieldService.totalRegister(searchParam,topicsQuery)
       }
       const totalPages = calculateTotalPages(totalFields)
       return res.status(200).json({

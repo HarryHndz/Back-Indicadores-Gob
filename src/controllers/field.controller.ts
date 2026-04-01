@@ -63,6 +63,14 @@ export class FieldController{
           fieldData.options = {
             options: municipios.map((municipio)=>({label:municipio.name,value:municipio.id}))
           }
+        }else if(req.body.integration_center_options){
+          fieldData.options = {
+            options: integrationCenters.map((integrationCenter)=>({
+              label:integrationCenter.name,
+              value:integrationCenter.id,
+              relation:integrationCenter.id_municipality
+            }))
+          }
         }else{
           fieldData.options = {options: req.body.options}
         }

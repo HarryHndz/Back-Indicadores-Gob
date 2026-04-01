@@ -7,6 +7,7 @@ import { DATA_TYPE_VALIDATION_RULES } from "@/utils/validation.rules";
 import { municipios } from "@/utils/municipios";
 import { calculateSkip, calculateTotalPages, TAKE } from "@/utils/pagination";
 import { capitalizeLetter } from "@/utils/capitalizeLetter";
+import { integrationCenters } from "@/utils/centrosIntegradores";
 
 
 export class FieldController{
@@ -251,6 +252,16 @@ export class FieldController{
     }
   }
 
+  findAllIntegrationCenter = async(req:Request,res:Response)=>{
+    try {
+      return res.status(200).json({
+        message:"Centros integradores obtenidos correctamente",
+        data:integrationCenters
+      })
+    } catch (error) {
+      res.status(500).json({message:"Error al obtener los centros integradores"})
+    }
+  }
   totalRegister = async(req:Request,res:Response)=>{
     try {
       const {formId,topicId,search,topicsId}  = req.query

@@ -1,7 +1,7 @@
-import { IMunicipio } from "@/data/interfaces/IEstado";
+import { IMunicipality } from "@/data/interfaces/IMunicipality";
 
 
-export const municipios: IMunicipio[] = [
+export const municipios: IMunicipality[] = [
   { id: 1, cve_geo: "27001", name: "BALANCÁN" },
   { id: 2, cve_geo: "27002", name: "CÁRDENAS" },
   { id: 3, cve_geo: "27003", name: "CENTLA" },
